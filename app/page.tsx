@@ -229,9 +229,7 @@ export default function Home() {
                   className={playingVoice === index ? "play active" : "play"}
                   onClick={() => setPlayingVoice(playingVoice === index ? null : index)}
                   aria-label={`Включить демо-голос: ${voice.name}`}
-                >
-                  {playingVoice === index ? "II" : ">"}
-                </button>
+                />
                 <div>
                   <h3>{voice.name}</h3>
                   <span>{voice.role} · {voice.duration}</span>

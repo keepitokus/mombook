@@ -290,7 +290,7 @@ h1 {
 
 .intro-grid h3 {
   font-size: 20px;
-  margin: 18px 0 10px;
+  margin: 20px 0 14px;
 }
 
 .intro-grid p,
@@ -300,6 +300,7 @@ h1 {
 .letter p {
   color: var(--muted);
   line-height: 1.75;
+  margin: 0;
 }
 
 .chapters {
@@ -307,9 +308,13 @@ h1 {
 }
 
 .section-heading {
-  margin: 0 auto 42px;
+  margin: 0 auto 52px;
   max-width: 860px;
   text-align: center;
+}
+
+.section-heading h2 + p {
+  margin-top: 24px;
 }
 
 .section-heading h2,
@@ -397,6 +402,7 @@ h1 {
   color: #4f4a43;
   font-size: 18px;
   line-height: 1.85;
+  margin: 24px 0 0;
   max-width: 780px;
 }
 
@@ -479,7 +485,7 @@ h1 {
   font-family: var(--font-display), Georgia, serif;
   font-size: 32px;
   line-height: 1;
-  margin: 8px 0;
+  margin: 12px 0 12px;
 }
 
 .photo-card p {
@@ -512,6 +518,11 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 22px;
+}
+
+.video-demo p {
+  color: rgba(255, 255, 255, 0.78);
+  margin-top: 20px;
 }
 
 .video-frame {
@@ -580,8 +591,19 @@ h1 {
 }
 
 .play {
+  flex-shrink: 0;
   height: 48px;
+  position: relative;
   width: 48px;
+}
+
+.play::before {
+  border-bottom: 9px solid transparent;
+  border-left: 13px solid currentColor;
+  border-top: 9px solid transparent;
+  content: "";
+  display: block;
+  margin-left: 3px;
 }
 
 .play.active {
@@ -589,13 +611,34 @@ h1 {
   color: var(--graphite);
 }
 
+.play.active::before,
+.play.active::after {
+  background: currentColor;
+  border: 0;
+  border-radius: 2px;
+  content: "";
+  height: 18px;
+  margin: 0;
+  width: 5px;
+}
+
+.play.active::after {
+  margin-left: 5px;
+}
+
 .voice-card h3 {
   font-size: 20px;
+}
+
+.voice-card span {
+  display: block;
+  margin-top: 6px;
 }
 
 .voice-card p {
   color: rgba(255, 255, 255, 0.88);
   line-height: 1.55;
+  margin: 14px 0 0;
 }
 
 .wave {
@@ -639,6 +682,14 @@ h1 {
   font-size: 18px;
 }
 
+.letter h2 + p {
+  margin-top: 28px;
+}
+
+.letter p + p {
+  margin-top: 18px;
+}
+
 .letter span {
   color: var(--cranberry);
   display: block;
@@ -671,6 +722,7 @@ h1 {
 .order p {
   color: rgba(255, 255, 255, 0.9);
   font-size: 18px;
+  margin-top: 24px;
 }
 
 .order-actions {
@@ -847,6 +899,10 @@ h1 {
     text-align: left;
   }
 
+  .section-heading h2 + p {
+    margin-top: 20px;
+  }
+
   .chapter-card {
     min-height: auto;
     padding: 28px 22px;
@@ -858,6 +914,7 @@ h1 {
 
   .chapter-card p {
     font-size: 16px;
+    margin-top: 20px;
   }
 
   .photo-grid {
