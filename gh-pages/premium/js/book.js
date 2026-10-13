@@ -1,7 +1,6 @@
 import { book } from "./data.js";
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const root = document.documentElement;
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -16,13 +15,12 @@ function el(tag, props = {}, children = []) {
     if (key === "className") node.className = value;
     else if (key === "dataset") Object.assign(node.dataset, value);
     else if (key === "text") node.textContent = value;
-    else if (key === "html") node.innerHTML = value;
+    else if (key === "style" && typeof value === "string") node.setAttribute("style", value);
     else if (key.startsWith("on") && typeof value === "function") {
       node.addEventListener(key.slice(2).toLowerCase(), value);
     } else if (value === false || value == null) continue;
-    else if (key === "checked" || key === "hidden" || key === "disabled") {
-      node[key] = Boolean(value);
-    } else node.setAttribute(key, value);
+    else if (key === "checked" || key === "hidden" || key === "disabled") node[key] = Boolean(value);
+    else node.setAttribute(key, value);
   }
   for (const child of [].concat(children)) {
     if (child == null || child === false) continue;
@@ -31,42 +29,38 @@ function el(tag, props = {}, children = []) {
   return node;
 }
 
+function pauseAllAudio() {
+  document.querySelectorAll("audio").forEach((audio) => {
+    audio.pause();
+  });
+  document.querySelectorAll(".voice-card").forEach((card) => {
+    card.classList.remove("is-playing");
+    const btn = card.querySelector(".play-btn");
+    if (btn) {
+      btn.textContent = "▶";
+      btn.setAttribute("aria-pressed", "false");
+    }
+  });
+}
+
 function initProgress() {
   const bar = document.querySelector("[data-read-progress]");
+  const topbar = document.querySelector("[data-topbar]");
   if (!bar) return;
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const value = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
-    bar.style.width = `${value}%`;
+    bar.style.width = `${max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0}%`;
+    topbar?.classList.toggle("is-solid", window.scrollY > 24);
   };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
-}
-
-function initReveal() {
-  const nodes = document.querySelectorAll(".reveal, .handwrite");
-  if (reduceMotion) {
-    nodes.forEach((n) => n.classList.add("is-visible"));
-    return;
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          io.unobserve(entry.target);
-        }
-      }
-    },
-    { threshold: 0.18, rootMargin: "0px 0px -8% 0px" },
-  );
-  nodes.forEach((n) => io.observe(n));
 }
 
 function initMenu() {
   const toggle = document.querySelector("[data-menu-toggle]");
   const links = document.querySelector("[data-nav-links]");
   const overlay = document.querySelector("[data-nav-overlay]");
+  const label = document.querySelector("[data-menu-label]");
   if (!toggle || !links || !overlay) return;
 
   const close = () => {
@@ -75,6 +69,7 @@ function initMenu() {
     links.classList.remove("is-open");
     overlay.classList.remove("is-open");
     overlay.hidden = true;
+    if (label) label.textContent = "Открыть меню";
   };
 
   const open = () => {
@@ -83,6 +78,7 @@ function initMenu() {
     links.classList.add("is-open");
     overlay.classList.add("is-open");
     overlay.hidden = false;
+    if (label) label.textContent = "Закрыть меню";
   };
 
   toggle.addEventListener("click", () => {
@@ -96,17 +92,36 @@ function initMenu() {
   });
 }
 
+function initToc() {
+  const toc = document.querySelector("[data-toc]");
+  if (!toc) return;
+  book.chapters.forEach((chapter, index) => {
+    const btn = el("button", {
+      type: "button",
+      onClick: () => {
+        document.dispatchEvent(new CustomEvent("premium:chapter", { detail: { index } }));
+        document.querySelector("#chapters")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      },
+    }, [
+      el("span", { className: "num", text: chapter.number }),
+      el("span", { className: "title", text: chapter.title }),
+      el("span", { className: "years", text: chapter.years }),
+    ]);
+    toc.append(el("li", {}, [btn]));
+  });
+}
+
 function initChapters() {
   const { chapters } = book;
   const nav = document.querySelector("[data-chapter-nav]");
   const visual = document.querySelector("[data-chapter-visual]");
   const years = document.querySelector("[data-chapter-years]");
+  const era = document.querySelector("[data-chapter-era]");
   const place = document.querySelector("[data-chapter-place]");
   const title = document.querySelector("[data-chapter-title]");
   const story = document.querySelector("[data-chapter-story]");
   const memory = document.querySelector("[data-chapter-memory]");
   const body = document.querySelector("[data-chapter-body]");
-  const progress = document.querySelector("[data-chapter-progress]");
   const count = document.querySelector("[data-chapter-count]");
   const prev = document.querySelector("[data-chapter-prev]");
   const next = document.querySelector("[data-chapter-next]");
@@ -115,37 +130,35 @@ function initChapters() {
   let active = 0;
 
   chapters.forEach((chapter, index) => {
-    const btn = el("button", {
-      type: "button",
-      className: index === 0 ? "active" : "",
-      onClick: () => show(index),
-    }, [
-      el("span", { className: "num", text: chapter.number }),
-      el("span", { className: "meta" }, [
-        el("small", { text: `${chapter.eraLabel} · ${chapter.years}` }),
+    nav.append(
+      el("button", {
+        type: "button",
+        className: index === 0 ? "active" : "",
+        onClick: () => show(index),
+      }, [
+        el("small", { text: `${chapter.number} · ${chapter.years}` }),
         el("strong", { text: chapter.title }),
       ]),
-    ]);
-    nav.append(btn);
+    );
   });
 
   function show(index) {
     active = Math.max(0, Math.min(chapters.length - 1, index));
     const chapter = chapters[active];
-    visual.style.backgroundImage = `linear-gradient(0deg, #261c1930, transparent 55%), url("${chapter.image}")`;
+    visual.style.backgroundImage = `linear-gradient(0deg, rgba(18,15,12,0.2), transparent 55%), url("${chapter.image}")`;
     years.textContent = chapter.years;
+    era.textContent = chapter.eraLabel;
     place.textContent = chapter.place;
     title.textContent = chapter.title;
     story.textContent = chapter.story;
     memory.textContent = chapter.memory;
-    progress.style.width = `${((active + 1) / chapters.length) * 100}%`;
     count.textContent = `${active + 1} / ${chapters.length}`;
     prev.disabled = active === 0;
     next.disabled = active === chapters.length - 1;
     nav.querySelectorAll("button").forEach((btn, i) => {
       const isActive = i === active;
       btn.classList.toggle("active", isActive);
-      if (isActive) btn.setAttribute("aria-current", "step");
+      if (isActive) btn.setAttribute("aria-current", "true");
       else btn.removeAttribute("aria-current");
     });
     if (!reduceMotion && body) {
@@ -157,12 +170,21 @@ function initChapters() {
 
   prev.addEventListener("click", () => show(active - 1));
   next.addEventListener("click", () => show(active + 1));
+  document.addEventListener("premium:chapter", (event) => {
+    show(event.detail.index);
+  });
   show(0);
 }
 
 function initGallery() {
   const tabs = document.querySelector("[data-album-tabs]");
   const grid = document.querySelector("[data-gallery-grid]");
+  const empty = document.querySelector("[data-album-empty]");
+  const featureOpen = document.querySelector("[data-feature-open]");
+  const featureImage = document.querySelector("[data-feature-image]");
+  const featureTitle = document.querySelector("[data-feature-title]");
+  const featureYear = document.querySelector("[data-feature-year]");
+  const featureCaption = document.querySelector("[data-feature-caption]");
   const modal = document.querySelector("[data-lightbox]");
   const image = document.querySelector("[data-lightbox-image]");
   const caption = document.querySelector("[data-lightbox-caption]");
@@ -172,74 +194,98 @@ function initGallery() {
   if (!tabs || !grid || !modal) return;
 
   let album = "all";
+  let featureIndex = 0;
   let openIndex = null;
   let lastFocus = null;
   let visible = [...book.photos];
 
   const albums = [{ id: "all", title: "Все" }, ...book.albums];
-
   albums.forEach((item) => {
     tabs.append(
       el("button", {
         type: "button",
         className: item.id === "all" ? "active" : "",
         "aria-pressed": item.id === "all" ? "true" : "false",
+        dataset: { albumId: item.id },
+        text: item.title,
         onClick: () => {
           album = item.id;
           tabs.querySelectorAll("button").forEach((btn) => {
-            const active = btn.textContent === item.title;
+            const active = btn.dataset.albumId === album;
             btn.classList.toggle("active", active);
             btn.setAttribute("aria-pressed", active ? "true" : "false");
           });
-          renderGrid();
+          featureIndex = 0;
+          render();
         },
-        text: item.title,
       }),
     );
   });
 
-  function renderGrid() {
+  function setFeature(index) {
+    if (!visible.length) return;
+    featureIndex = Math.max(0, Math.min(visible.length - 1, index));
+    const photo = visible[featureIndex];
+    featureImage.src = photo.image;
+    featureImage.alt = `${photo.title}. ${photo.caption}`;
+    featureTitle.textContent = photo.title;
+    featureYear.textContent = photo.year;
+    featureCaption.textContent = photo.caption;
+    grid.querySelectorAll("button").forEach((btn, i) => {
+      btn.classList.toggle("active", i === featureIndex);
+    });
+  }
+
+  function render() {
     visible =
       album === "all"
         ? [...book.photos]
         : book.photos.filter((photo) => photo.album === album);
     grid.replaceChildren();
+    if (empty) empty.hidden = visible.length > 0;
+    featureOpen.hidden = visible.length === 0;
+    if (!visible.length) return;
+
     visible.forEach((photo, index) => {
       const btn = el("button", {
         type: "button",
-        className: "photo-card",
-        onClick: () => open(index, btn),
+        className: index === featureIndex ? "active" : "",
+        onClick: () => setFeature(index),
       }, [
         el("img", {
           src: photo.image,
-          alt: `${photo.title}. ${photo.caption}`,
+          alt: photo.title,
           loading: "lazy",
           decoding: "async",
-          width: "864",
-          height: "1152",
+          width: "400",
+          height: "400",
         }),
-        el("div", { className: "meta" }, [
-          el("strong", { text: photo.title }),
-          el("small", { text: photo.year }),
-        ]),
       ]);
       grid.append(btn);
     });
+    setFeature(Math.min(featureIndex, visible.length - 1));
   }
 
-  function open(index, trigger) {
+  function openLightbox(index, trigger) {
+    if (!visible.length) return;
+    pauseAllAudio();
     openIndex = index;
     lastFocus = trigger || document.activeElement;
     const photo = visible[openIndex];
     image.src = photo.image;
     image.alt = `${photo.title}. ${photo.caption}`;
-    caption.innerHTML = `<strong>${photo.title}</strong> · ${photo.year}<br>${photo.caption}`;
+    caption.replaceChildren(
+      el("strong", { text: photo.title }),
+      document.createTextNode(` · ${photo.year}`),
+      el("br"),
+      document.createTextNode(photo.caption),
+    );
     modal.hidden = false;
     document.body.classList.add("modal-open");
     closeBtn.focus();
   }
 
-  function close() {
+  function closeLightbox() {
     modal.hidden = true;
     document.body.classList.remove("modal-open");
     openIndex = null;
@@ -249,76 +295,61 @@ function initGallery() {
   function step(delta) {
     if (openIndex == null || !visible.length) return;
     openIndex = (openIndex + delta + visible.length) % visible.length;
-    open(openIndex, lastFocus);
+    openLightbox(openIndex, lastFocus);
   }
 
-  closeBtn.addEventListener("click", close);
+  featureOpen.addEventListener("click", () => openLightbox(featureIndex, featureOpen));
+  closeBtn.addEventListener("click", closeLightbox);
   prevBtn.addEventListener("click", () => step(-1));
   nextBtn.addEventListener("click", () => step(1));
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) close();
+    if (e.target === modal) closeLightbox();
   });
 
   let touchX = null;
-  modal.addEventListener(
-    "touchstart",
-    (e) => {
-      touchX = e.changedTouches[0]?.clientX ?? null;
-    },
-    { passive: true },
-  );
-  modal.addEventListener(
-    "touchend",
-    (e) => {
-      if (touchX == null || modal.hidden) return;
-      const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
-      if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
-      touchX = null;
-    },
-    { passive: true },
-  );
+  modal.addEventListener("touchstart", (e) => {
+    touchX = e.changedTouches[0]?.clientX ?? null;
+  }, { passive: true });
+  modal.addEventListener("touchend", (e) => {
+    if (touchX == null || modal.hidden) return;
+    const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
+    if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
+    touchX = null;
+  }, { passive: true });
 
   document.addEventListener("keydown", (e) => {
     if (modal.hidden) return;
-    if (e.key === "Escape") close();
+    if (e.key === "Escape") closeLightbox();
     if (e.key === "ArrowRight") step(1);
     if (e.key === "ArrowLeft") step(-1);
   });
 
-  renderGrid();
+  render();
 }
 
 function initVoices() {
   const grid = document.querySelector("[data-voice-grid]");
   if (!grid) return;
 
-  /** @type {HTMLAudioElement | null} */
-  let currentAudio = null;
-  /** @type {(() => void) | null} */
-  let currentSync = null;
-
   book.voices.forEach((voice) => {
-    const card = el("article", { className: "voice-card reveal" }, [
-      el("p", { className: "relation", text: voice.relation }),
-      el("h3", { text: voice.name }),
-      el("blockquote", { text: voice.quote }),
+    const card = el("article", { className: "voice-card" }, [
+      el("div", {}, [
+        el("p", { className: "relation", text: voice.relation }),
+        el("h3", { text: voice.name }),
+        el("blockquote", { text: voice.quote }),
+      ]),
     ]);
 
     if (!voice.src) {
-      card.append(
-        el("div", {
-          className: "audio-missing",
-          text: "Аудиозапись появится в персональной книге.",
-        }),
-      );
+      card.append(el("div", {
+        className: "audio-missing",
+        text: "Аудиозапись появится в персональной книге.",
+      }));
       grid.append(card);
       return;
     }
 
-    const audio = el("audio", {
-      preload: "none",
-      src: voice.src,
-    });
+    const audio = el("audio", { preload: "none", src: voice.src });
     const playBtn = el("button", {
       type: "button",
       className: "play-btn",
@@ -343,20 +374,12 @@ function initVoices() {
       time.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
     };
 
-    const stopOthers = () => {
-      if (currentAudio && currentAudio !== audio) {
-        currentAudio.pause();
-        currentSync?.();
-      }
-    };
-
     playBtn.addEventListener("click", async () => {
-      stopOthers();
       if (audio.paused) {
+        pauseAllAudio();
         try {
           await audio.play();
-          currentAudio = audio;
-          currentSync = sync;
+          card.classList.add("is-playing");
           playBtn.textContent = "❚❚";
           playBtn.setAttribute("aria-pressed", "true");
         } catch {
@@ -365,6 +388,7 @@ function initVoices() {
         }
       } else {
         audio.pause();
+        card.classList.remove("is-playing");
         playBtn.textContent = "▶";
         playBtn.setAttribute("aria-pressed", "false");
       }
@@ -379,52 +403,62 @@ function initVoices() {
     audio.addEventListener("loadedmetadata", sync);
     audio.addEventListener("timeupdate", sync);
     audio.addEventListener("ended", () => {
+      card.classList.remove("is-playing");
       playBtn.textContent = "▶";
       playBtn.setAttribute("aria-pressed", "false");
       sync();
     });
-    audio.addEventListener("pause", () => {
-      if (currentAudio === audio) {
-        playBtn.textContent = "▶";
-        playBtn.setAttribute("aria-pressed", "false");
-      }
-    });
 
-    card.append(
-      el("div", { className: "audio-player" }, [
-        el("div", { className: "audio-row" }, [playBtn, time]),
-        seek,
-        audio,
-      ]),
-    );
+    card.append(el("div", { className: "audio-player" }, [
+      el("div", { className: "audio-row" }, [playBtn, time]),
+      seek,
+      audio,
+    ]));
     grid.append(card);
   });
 }
 
 function initVideos() {
   const grid = document.querySelector("[data-video-grid]");
-  if (!grid) return;
+  if (!grid || !book.videos.length) return;
 
-  book.videos.forEach((video) => {
-    const hasSource = Boolean(video.src || video.sources?.length);
-    const card = el("article", { className: "video-card reveal" }, [
-      el("div", {
-        className: "video-poster",
-        style: video.poster ? `background-image:url("${video.poster}")` : undefined,
-      }, [
-        video.duration
-          ? el("span", { className: "badge", text: video.duration })
-          : null,
-      ]),
-      el("div", { className: "video-body" }, [
-        el("h3", { text: video.title }),
+  const [hero, ...rest] = book.videos;
+  const hasSource = Boolean(hero.src || hero.sources?.length);
+
+  const heroBlock = el("div", { className: "film-hero" }, [
+    el("div", {
+      className: "film-poster",
+      style: hero.poster ? `background-image:url("${hero.poster}")` : undefined,
+    }),
+    el("div", { className: "film-copy" }, [
+      el("h3", { text: hero.title }),
+      el("p", { text: hero.description }),
+      hero.duration ? el("p", { text: `Длительность: ${hero.duration}` }) : null,
+      hasSource
+        ? el("button", {
+            type: "button",
+            className: "button",
+            text: "Смотреть",
+            onClick: () => openVideo(hero),
+          })
+        : el("span", {
+            className: "video-placeholder",
+            text: "В вашей книге здесь будет семейный ролик",
+          }),
+    ]),
+  ]);
+
+  const list = el("div", { className: "film-list" },
+    rest.map((video) =>
+      el("article", { className: "film-item" }, [
+        el("h4", { text: video.title }),
         el("p", { text: video.description }),
-        hasSource
+        video.duration ? el("p", { text: video.duration }) : null,
+        video.src || video.sources?.length
           ? el("button", {
               type: "button",
-              className: "button soft",
-              style: "margin-top:1rem",
-              text: "Смотреть",
+              className: "text-btn",
+              text: "Смотреть →",
               onClick: () => openVideo(video),
             })
           : el("span", {
@@ -432,9 +466,10 @@ function initVideos() {
               text: "Пример размещения видео",
             }),
       ]),
-    ]);
-    grid.append(card);
-  });
+    ),
+  );
+
+  grid.append(heroBlock, list);
 }
 
 function openVideo(video) {
@@ -443,6 +478,8 @@ function openVideo(video) {
   const closeBtn = document.querySelector("[data-video-close]");
   if (!modal || !mount || !closeBtn) return;
 
+  pauseAllAudio();
+  const lastFocus = document.activeElement;
   mount.replaceChildren();
   const player = el("video", {
     controls: true,
@@ -468,11 +505,20 @@ function openVideo(video) {
     mount.replaceChildren();
     modal.hidden = true;
     document.body.classList.remove("modal-open");
+    lastFocus?.focus?.();
   };
+
   closeBtn.onclick = close;
   modal.onclick = (e) => {
     if (e.target === modal) close();
   };
+  const onKey = (e) => {
+    if (e.key === "Escape" && !modal.hidden) {
+      close();
+      document.removeEventListener("keydown", onKey);
+    }
+  };
+  document.addEventListener("keydown", onKey);
 }
 
 function initLetters() {
@@ -480,9 +526,26 @@ function initLetters() {
   const modal = document.querySelector("[data-letter-modal]");
   const mount = document.querySelector("[data-letter-mount]");
   const closeBtn = document.querySelector("[data-letter-close]");
-  if (!grid || !modal || !mount || !closeBtn) return;
+  if (!grid || !modal || !mount || !closeBtn || !book.letters.length) return;
 
   let lastFocus = null;
+  const [featured, ...rest] = book.letters;
+
+  const openLetter = (letter, trigger) => {
+    pauseAllAudio();
+    lastFocus = trigger || document.activeElement;
+    mount.replaceChildren(
+      el("div", { className: "letter-modal-card" }, [
+        el("p", { className: "relation", text: letter.relation }),
+        el("h3", { text: `Письмо от ${letter.from}` }),
+        el("div", { className: "body", text: letter.body }),
+        el("p", { className: "signature", text: letter.signature }),
+      ]),
+    );
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    closeBtn.focus();
+  };
 
   const close = () => {
     modal.hidden = true;
@@ -491,35 +554,35 @@ function initLetters() {
     lastFocus?.focus?.();
   };
 
-  book.letters.forEach((letter) => {
-    const openBtn = el("button", {
-      type: "button",
-      className: "button soft open-letter",
-      text: "Открыть письмо",
-    });
-    openBtn.addEventListener("click", () => {
-      lastFocus = openBtn;
-      mount.replaceChildren(
-        el("div", { className: "letter-modal-card" }, [
-          el("p", { className: "relation", text: letter.relation }),
-          el("h3", { text: `Письмо от ${letter.from}` }),
-          el("div", { className: "body", text: letter.body }),
-          el("p", { className: "signature", text: letter.signature }),
-        ]),
-      );
-      modal.hidden = false;
-      document.body.classList.add("modal-open");
-      closeBtn.focus();
-    });
-
-    grid.append(
-      el("article", { className: "letter-card reveal" }, [
-        el("p", { className: "relation", text: letter.relation }),
-        el("blockquote", { text: letter.preview }),
-        openBtn,
-      ]),
-    );
+  const openFeatured = el("button", {
+    type: "button",
+    className: "button",
+    text: "Открыть письмо",
+    style: "margin-top:1.2rem;width:fit-content",
+    onClick: (event) => openLetter(featured, event.currentTarget),
   });
+
+  grid.append(
+    el("article", { className: "letter-sheet" }, [
+      el("p", { className: "relation", text: featured.relation }),
+      el("h3", { text: `От ${featured.from}` }),
+      el("p", { className: "preview", text: featured.preview }),
+      openFeatured,
+    ]),
+    el("div", { className: "letter-side" },
+      rest.map((letter) =>
+        el("button", {
+          type: "button",
+          className: "letter-mini",
+          onClick: (event) => openLetter(letter, event.currentTarget),
+        }, [
+          el("p", { className: "relation", text: letter.relation }),
+          el("strong", { text: letter.from }),
+          el("span", { text: letter.preview }),
+        ]),
+      ),
+    ),
+  );
 
   closeBtn.addEventListener("click", close);
   modal.addEventListener("click", (e) => {
@@ -563,11 +626,9 @@ function hydrateStaticCopy() {
 hydrateStaticCopy();
 initProgress();
 initMenu();
-initReveal();
+initToc();
 initChapters();
 initGallery();
 initVoices();
 initVideos();
 initLetters();
-
-root.dataset.bookReady = "true";

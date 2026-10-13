@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type {
   AudioMemory,
   FamilyLetter,
@@ -25,15 +18,17 @@ function formatTime(seconds: number) {
 
 export function PremiumBook({ book }: { book: PremiumBookData }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [solidNav, setSolidNav] = useState(false);
   const [chapterIndex, setChapterIndex] = useState(0);
-  const [album, setAlbum] = useState<string>("all");
+  const [album, setAlbum] = useState("all");
+  const [featureIndex, setFeatureIndex] = useState(0);
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
   const [letter, setLetter] = useState<FamilyLetter | null>(null);
   const [video, setVideo] = useState<VideoMemory | null>(null);
   const [readProgress, setReadProgress] = useState(0);
   const [activeVoice, setActiveVoice] = useState<string | null>(null);
-  const photoTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const letterTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const photoTriggerRef = useRef<HTMLElement | null>(null);
+  const letterTriggerRef = useRef<HTMLElement | null>(null);
 
   const chapter = book.chapters[chapterIndex];
   const visiblePhotos = useMemo(
@@ -43,13 +38,17 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
         : book.photos.filter((photo) => photo.album === album),
     [album, book.photos],
   );
+  const feature = visiblePhotos[featureIndex] ?? visiblePhotos[0] ?? null;
   const openPhoto =
     photoIndex === null ? null : (visiblePhotos[photoIndex] ?? null);
+  const [featuredLetter, ...otherLetters] = book.letters;
+  const [heroVideo, ...restVideos] = book.videos;
 
   useEffect(() => {
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setReadProgress(max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0);
+      setSolidNav(window.scrollY > 24);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -61,7 +60,7 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
       "modal-open",
       Boolean(menuOpen || openPhoto || letter || video),
     );
-    const onKey = (event: globalThis.KeyboardEvent) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (openPhoto) setPhotoIndex(null);
         else if (letter) setLetter(null);
@@ -87,17 +86,15 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
     };
   }, [menuOpen, openPhoto, letter, video, photoIndex, visiblePhotos.length]);
 
-  useEffect(() => {
-    if (photoIndex === null) photoTriggerRef.current?.focus();
-  }, [photoIndex]);
-
-  useEffect(() => {
-    if (!letter) letterTriggerRef.current?.focus();
-  }, [letter]);
+  const openChapter = (index: number) => {
+    setChapterIndex(index);
+    setMenuOpen(false);
+    document.getElementById("chapters")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="premium-root">
-      <div className="progress-bar" aria-hidden="true">
+      <div className="read-progress" aria-hidden="true">
         <span style={{ width: `${readProgress}%` }} />
       </div>
 
@@ -110,7 +107,7 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
         />
       ) : null}
 
-      <header className="topbar">
+      <header className={solidNav || menuOpen ? "topbar is-solid" : "topbar"}>
         <a
           className="brand"
           href="#cover"
@@ -132,7 +129,9 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           aria-controls="premium-menu"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span className="sr-only">{menuOpen ? "Закрыть меню" : "Открыть меню"}</span>
+          <span className="sr-only">
+            {menuOpen ? "Закрыть меню" : "Открыть меню"}
+          </span>
           <span className="bars" aria-hidden="true">
             <i />
             <i />
@@ -146,12 +145,12 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
         >
           {[
             ["#dedication", "Посвящение"],
-            ["#chapters", "История"],
-            ["#photos", "Фото"],
-            ["#videos", "Видео"],
+            ["#contents", "Оглавление"],
+            ["#chapters", "Главы"],
+            ["#photos", "Архив"],
             ["#voices", "Голоса"],
             ["#letters", "Письма"],
-            ["#order", "Заказать"],
+            ["#closing", "Финал"],
           ].map(([href, label]) => (
             <a key={href} href={href} onClick={() => setMenuOpen(false)}>
               {label}
@@ -169,102 +168,100 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           />
           <div className="hero-shade" aria-hidden="true" />
           <div className="hero-inner">
-            <span className="demo-note">{book.cover.demoNote}</span>
-            <h1>{book.cover.recipientName}</h1>
-            <p className="tagline">{book.cover.tagline}</p>
-            <p className="subtitle">{book.cover.subtitle}</p>
-            <div className="hero-actions">
-              <a className="button" href="#dedication">
-                {book.cover.ctaLabel}
-              </a>
-            </div>
-          </div>
-          <div className="scroll-hint" aria-hidden="true">
-            <span>Листать</span>
-            <i />
+            <p className="demo-note">{book.cover.demoNote}</p>
+            <p className="hero-product">Премиальная книга</p>
+            <h1>Мамина история</h1>
+            <p className="hero-name">{book.cover.recipientName}</p>
+            <p className="hero-tagline">{book.cover.tagline}</p>
+            <p className="hero-lead">{book.cover.subtitle}</p>
+            <a className="button" href="#dedication">
+              Открыть историю
+            </a>
           </div>
         </section>
 
-        <section className="section dedication" id="dedication">
-          <div className="wrap">
-            <div className="ornament" aria-hidden="true">
-              ✧
-            </div>
-            <p className="eyebrow">Посвящение</p>
+        <section className="page dedication" id="dedication">
+          <div className="page-inner">
+            <p className="kicker">Посвящение</p>
             <h2 className="dedication-quote">{book.dedication.quote}</h2>
-            <p className="lead">{book.dedication.body}</p>
+            <p className="dedication-body">{book.dedication.body}</p>
             <p className="signature">{book.dedication.signature}</p>
           </div>
         </section>
 
-        <section className="section chapters" id="chapters">
-          <div className="wrap">
-            <p className="eyebrow">Семь глав одной истории</p>
-            <h2 className="section-title">Хронология жизни</h2>
-            <p className="lead">
-              От бабушкиного дома у реки до сегодняшнего дня — главы, которые можно
-              листать как страницы дорогой книги.
-            </p>
-            <div className="chapter-layout">
-              <div className="chapter-nav" role="tablist" aria-label="Главы книги">
+        <section className="page contents" id="contents">
+          <div className="page-inner">
+            <p className="kicker">Оглавление</p>
+            <h2 className="page-title">Семь глав одной жизни</h2>
+            <ol className="toc">
+              {book.chapters.map((item, index) => (
+                <li key={item.id}>
+                  <button type="button" onClick={() => openChapter(index)}>
+                    <span className="num">{item.number}</span>
+                    <span className="title">{item.title}</span>
+                    <span className="years">{item.years}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="reader" id="chapters">
+          <div className="reader-inner">
+            <p className="kicker">Главы</p>
+            <h2 className="page-title">Хронология</h2>
+            <div className="reader-layout">
+              <div className="chapter-rail" aria-label="Выбор главы">
                 {book.chapters.map((item, index) => (
                   <button
                     key={item.id}
                     type="button"
                     className={index === chapterIndex ? "active" : undefined}
-                    aria-current={index === chapterIndex ? "step" : undefined}
+                    aria-current={index === chapterIndex ? "true" : undefined}
                     onClick={() => setChapterIndex(index)}
                   >
-                    <span className="num">{item.number}</span>
-                    <span className="meta">
-                      <small>
-                        {item.eraLabel} · {item.years}
-                      </small>
-                      <strong>{item.title}</strong>
-                    </span>
+                    <small>
+                      {item.number} · {item.years}
+                    </small>
+                    <strong>{item.title}</strong>
                   </button>
                 ))}
               </div>
-              <article className="chapter-scene" aria-live="polite">
+              <article className="spread" aria-live="polite">
                 <div
-                  className="chapter-visual"
+                  className="spread-visual"
                   style={{
-                    backgroundImage: `linear-gradient(0deg, #261c1930, transparent 55%), url("${chapter.image}")`,
+                    backgroundImage: `linear-gradient(0deg, rgba(18,15,12,0.2), transparent 55%), url("${chapter.image}")`,
                   }}
                 >
-                  <span className="years">{chapter.years}</span>
+                  <span className="spread-years">{chapter.years}</span>
                 </div>
-                <div className="chapter-progress" aria-hidden="true">
-                  <span
-                    style={{
-                      width: `${((chapterIndex + 1) / book.chapters.length) * 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="chapter-body">
-                  <p className="place">{chapter.place}</p>
+                <div className="spread-copy">
+                  <p className="spread-era">{chapter.eraLabel}</p>
+                  <p className="spread-place">{chapter.place}</p>
                   <h3>{chapter.title}</h3>
-                  <p className="story">{chapter.story}</p>
-                  <p className="chapter-memory">{chapter.memory}</p>
-                  <div className="chapter-controls">
+                  <p className="spread-story">{chapter.story}</p>
+                  <blockquote>{chapter.memory}</blockquote>
+                  <div className="spread-controls">
                     <button
-                      className="text-btn"
                       type="button"
+                      className="text-btn"
                       disabled={chapterIndex === 0}
                       onClick={() => setChapterIndex((i) => i - 1)}
                     >
                       ← Назад
                     </button>
-                    <span className="count">
+                    <span className="spread-count">
                       {chapterIndex + 1} / {book.chapters.length}
                     </span>
                     <button
-                      className="text-btn"
                       type="button"
+                      className="text-btn"
                       disabled={chapterIndex === book.chapters.length - 1}
                       onClick={() => setChapterIndex((i) => i + 1)}
                     >
-                      Следующая глава →
+                      Далее →
                     </button>
                   </div>
                 </div>
@@ -273,83 +270,93 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           </div>
         </section>
 
-        <section className="section gallery" id="photos">
-          <div className="wrap">
-            <p className="eyebrow">Семейный фотоархив</p>
-            <h2 className="section-title">Моменты, к которым хочется возвращаться</h2>
-            <p className="lead">
-              Двенадцать кадров из демонстрационного архива семьи Соколовых — с
-              подписями, годами и полноэкранным просмотром.
-            </p>
-            <div className="album-tabs" role="tablist" aria-label="Альбомы">
-              <AlbumTab
-                label="Все"
-                active={album === "all"}
-                onClick={() => setAlbum("all")}
-              />
+        <section className="archive" id="photos">
+          <div className="archive-inner">
+            <p className="kicker">Семейный фотоархив</p>
+            <h2 className="page-title">Моменты, к которым хочется возвращаться</h2>
+            <div className="album-tabs" aria-label="Альбомы">
+              <button
+                type="button"
+                className={album === "all" ? "active" : undefined}
+                aria-pressed={album === "all"}
+                onClick={() => {
+                  setAlbum("all");
+                  setFeatureIndex(0);
+                }}
+              >
+                Все
+              </button>
               {book.albums.map((item) => (
-                <AlbumTab
-                  key={item.id}
-                  label={item.title}
-                  active={album === item.id}
-                  onClick={() => setAlbum(item.id)}
-                />
-              ))}
-            </div>
-            <div className="gallery-grid">
-              {visiblePhotos.map((photo, index) => (
                 <button
-                  key={photo.id}
+                  key={item.id}
                   type="button"
-                  className="photo-card"
-                  onClick={(event) => {
-                    photoTriggerRef.current = event.currentTarget;
-                    setPhotoIndex(index);
+                  className={album === item.id ? "active" : undefined}
+                  aria-pressed={album === item.id}
+                  onClick={() => {
+                    setAlbum(item.id);
+                    setFeatureIndex(0);
                   }}
                 >
-                  <img
-                    src={photo.image}
-                    alt={`${photo.title}. ${photo.caption}`}
-                    loading="lazy"
-                    decoding="async"
-                    width={864}
-                    height={1152}
-                  />
-                  <div className="meta">
-                    <strong>{photo.title}</strong>
-                    <small>{photo.year}</small>
-                  </div>
+                  {item.title}
                 </button>
               ))}
             </div>
+            {feature ? (
+              <div className="archive-stage">
+                <button
+                  type="button"
+                  className="feature-frame"
+                  onClick={(event) => {
+                    photoTriggerRef.current = event.currentTarget;
+                    setPhotoIndex(featureIndex);
+                  }}
+                >
+                  <img
+                    src={feature.image}
+                    alt={`${feature.title}. ${feature.caption}`}
+                    width={864}
+                    height={1152}
+                  />
+                  <div className="feature-meta">
+                    <strong>{feature.title}</strong>
+                    <span>{feature.year}</span>
+                    <p>{feature.caption}</p>
+                  </div>
+                </button>
+                <div className="thumb-strip">
+                  {visiblePhotos.map((photo, index) => (
+                    <button
+                      key={photo.id}
+                      type="button"
+                      className={index === featureIndex ? "active" : undefined}
+                      onClick={() => setFeatureIndex(index)}
+                    >
+                      <img
+                        src={photo.image}
+                        alt={photo.title}
+                        loading="lazy"
+                        width={400}
+                        height={400}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="empty-note">В этом альбоме пока нет снимков.</p>
+            )}
           </div>
         </section>
 
-        <section className="section videos" id="videos">
-          <div className="wrap">
-            <p className="eyebrow">Видеоархив</p>
-            <h2 className="section-title">Моменты, которые можно прожить снова</h2>
-            <p className="lead">
-              В персональной книге здесь появятся ваши семейные ролики. В этой
-              демонстрации показан пример размещения без ложного воспроизведения.
+        <section className="voices-page" id="voices">
+          <div className="page-inner">
+            <p className="kicker">Голоса близких</p>
+            <h2 className="page-title">Голоса, которые хочется слышать</h2>
+            <p className="page-lead">
+              Короткие воспоминания. Воспроизводятся только по нажатию —
+              одновременно звучит одна запись.
             </p>
-            <div className="video-grid">
-              {book.videos.map((item) => (
-                <VideoCard key={item.id} video={item} onPlay={setVideo} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section voices" id="voices">
-          <div className="wrap">
-            <p className="eyebrow">Голоса близких</p>
-            <h2 className="section-title">Голоса, которые хочется слышать</h2>
-            <p className="lead">
-              Короткие воспоминания от дочери, сына и мужа. Демо-дорожки запускаются
-              только по нажатию; одновременно играет одна запись.
-            </p>
-            <div className="voice-grid">
+            <div className="voice-list">
               {book.voices.map((voice) => (
                 <VoiceCard
                   key={voice.id}
@@ -367,37 +374,110 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           </div>
         </section>
 
-        <section className="section letters" id="letters">
-          <div className="wrap">
-            <p className="eyebrow">Письма маме</p>
-            <h2 className="section-title">Есть слова, которые хочется сохранить</h2>
-            <p className="lead">
-              Три письма близких — на бумаге, которую можно открыть целиком и закрыть
-              с клавиатуры.
-            </p>
-            <div className="letter-grid">
-              {book.letters.map((item) => (
-                <article key={item.id} className="letter-card">
-                  <p className="relation">{item.relation}</p>
-                  <blockquote>{item.preview}</blockquote>
+        <section className="video-page" id="videos">
+          <div className="page-inner">
+            <p className="kicker">Видеоархив</p>
+            <h2 className="page-title">Моменты, которые можно прожить снова</h2>
+            <div className="film-frame">
+              {heroVideo ? (
+                <div className="film-hero">
+                  <div
+                    className="film-poster"
+                    style={
+                      heroVideo.poster
+                        ? ({
+                            backgroundImage: `url("${heroVideo.poster}")`,
+                          } as CSSProperties)
+                        : undefined
+                    }
+                  />
+                  <div className="film-copy">
+                    <h3>{heroVideo.title}</h3>
+                    <p>{heroVideo.description}</p>
+                    {heroVideo.duration ? (
+                      <p>Длительность: {heroVideo.duration}</p>
+                    ) : null}
+                    {heroVideo.src || heroVideo.sources?.length ? (
+                      <button
+                        type="button"
+                        className="button"
+                        onClick={() => {
+                          setActiveVoice(null);
+                          setVideo(heroVideo);
+                        }}
+                      >
+                        Смотреть
+                      </button>
+                    ) : (
+                      <span className="video-placeholder">
+                        В вашей книге здесь будет семейный ролик
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : null}
+              <div className="film-list">
+                {restVideos.map((item) => (
+                  <article key={item.id} className="film-item">
+                    <h4>{item.title}</h4>
+                    <p>{item.description}</p>
+                    {item.duration ? <p>{item.duration}</p> : null}
+                    <span className="video-placeholder">
+                      Пример размещения видео
+                    </span>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="letters-page" id="letters">
+          <div className="page-inner">
+            <p className="kicker">Письма маме</p>
+            <h2 className="page-title">Есть слова, которые хочется сохранить</h2>
+            <div className="letters-layout">
+              {featuredLetter ? (
+                <article className="letter-sheet">
+                  <p className="relation">{featuredLetter.relation}</p>
+                  <h3>От {featuredLetter.from}</h3>
+                  <p className="preview">{featuredLetter.preview}</p>
                   <button
                     type="button"
-                    className="button soft open-letter"
+                    className="button"
+                    style={{ marginTop: "1.2rem", width: "fit-content" }}
                     onClick={(event) => {
                       letterTriggerRef.current = event.currentTarget;
-                      setLetter(item);
+                      setLetter(featuredLetter);
                     }}
                   >
                     Открыть письмо
                   </button>
                 </article>
-              ))}
+              ) : null}
+              <div className="letter-side">
+                {otherLetters.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="letter-mini"
+                    onClick={(event) => {
+                      letterTriggerRef.current = event.currentTarget;
+                      setLetter(item);
+                    }}
+                  >
+                    <p className="relation">{item.relation}</p>
+                    <strong>{item.from}</strong>
+                    <span>{item.preview}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="section closing" id="closing">
-          <div className="wrap">
+        <section className="closing" id="closing">
+          <div className="page-inner">
             <h2>{book.closing.title}</h2>
             {book.closing.body.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -406,11 +486,11 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           </div>
         </section>
 
-        <section className="section commercial" id="order">
-          <div className="wrap">
-            <p className="eyebrow">Проект «Я здесь»</p>
-            <h2 className="section-title">{book.commercial.title}</h2>
-            <p className="lead">{book.commercial.subtitle}</p>
+        <section className="colophon" id="order">
+          <div className="page-inner">
+            <p className="kicker">После книги</p>
+            <h2 className="page-title">{book.commercial.title}</h2>
+            <p className="page-lead">{book.commercial.subtitle}</p>
             <p className="price">{book.commercial.price}</p>
             <a
               className="button"
@@ -421,21 +501,21 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
               {book.commercial.ctaLabel}
             </a>
             <p className="occasion">{book.commercial.occasionNote}</p>
+            <p className="colophon-note">
+              Это демонстрация проекта «Я здесь». Базовая книга доступна на
+              главной странице демо-сайта.
+            </p>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <p>
-          Демонстрационная книга проекта «Я здесь». Персонажи и история вымышлены.
-          Базовая версия доступна на главной странице демо-сайта.
-        </p>
-      </footer>
-
       {openPhoto ? (
         <Lightbox
           photo={openPhoto}
-          onClose={() => setPhotoIndex(null)}
+          onClose={() => {
+            setPhotoIndex(null);
+            photoTriggerRef.current?.focus();
+          }}
           onPrev={() =>
             setPhotoIndex((i) =>
               i === null
@@ -458,14 +538,20 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
           aria-modal="true"
           aria-label="Письмо"
           onClick={(event) => {
-            if (event.target === event.currentTarget) setLetter(null);
+            if (event.target === event.currentTarget) {
+              setLetter(null);
+              letterTriggerRef.current?.focus();
+            }
           }}
         >
           <button
             className="modal-close"
             type="button"
             aria-label="Закрыть письмо"
-            onClick={() => setLetter(null)}
+            onClick={() => {
+              setLetter(null);
+              letterTriggerRef.current?.focus();
+            }}
           >
             ×
           </button>
@@ -518,67 +604,6 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
   );
 }
 
-function AlbumTab({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={active ? "active" : undefined}
-      aria-pressed={active}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
-}
-
-function VideoCard({
-  video,
-  onPlay,
-}: {
-  video: VideoMemory;
-  onPlay: (video: VideoMemory) => void;
-}) {
-  const hasSource = Boolean(video.src || video.sources?.length);
-  return (
-    <article className="video-card">
-      <div
-        className="video-poster"
-        style={
-          video.poster
-            ? ({ backgroundImage: `url("${video.poster}")` } as CSSProperties)
-            : undefined
-        }
-      >
-        {video.duration ? <span className="badge">{video.duration}</span> : null}
-      </div>
-      <div className="video-body">
-        <h3>{video.title}</h3>
-        <p>{video.description}</p>
-        {hasSource ? (
-          <button
-            type="button"
-            className="button soft"
-            style={{ marginTop: "1rem" }}
-            onClick={() => onPlay(video)}
-          >
-            Смотреть
-          </button>
-        ) : (
-          <span className="video-placeholder">Пример размещения видео</span>
-        )}
-      </div>
-    </article>
-  );
-}
-
 function VoiceCard({
   voice,
   isActive,
@@ -596,17 +621,17 @@ function VoiceCard({
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    if (!isActive) {
-      audioRef.current?.pause();
-    }
+    if (!isActive) audioRef.current?.pause();
   }, [isActive]);
 
   if (!voice.src) {
     return (
       <article className="voice-card">
-        <p className="relation">{voice.relation}</p>
-        <h3>{voice.name}</h3>
-        <blockquote>{voice.quote}</blockquote>
+        <div>
+          <p className="relation">{voice.relation}</p>
+          <h3>{voice.name}</h3>
+          <blockquote>{voice.quote}</blockquote>
+        </div>
         <div className="audio-missing">
           Аудиозапись появится в персональной книге.
         </div>
@@ -615,10 +640,12 @@ function VoiceCard({
   }
 
   return (
-    <article className="voice-card">
-      <p className="relation">{voice.relation}</p>
-      <h3>{voice.name}</h3>
-      <blockquote>{voice.quote}</blockquote>
+    <article className={playing ? "voice-card is-playing" : "voice-card"}>
+      <div>
+        <p className="relation">{voice.relation}</p>
+        <h3>{voice.name}</h3>
+        <blockquote>{voice.quote}</blockquote>
+      </div>
       <div className="audio-player">
         <div className="audio-row">
           <button
@@ -693,11 +720,6 @@ function Lightbox({
   onNext: () => void;
 }) {
   const touchX = useRef<number | null>(null);
-
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape") onClose();
-  };
-
   return (
     <div
       className="modal"
@@ -707,13 +729,13 @@ function Lightbox({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      onKeyDown={onKeyDown}
       onTouchStart={(event) => {
         touchX.current = event.changedTouches[0]?.clientX ?? null;
       }}
       onTouchEnd={(event) => {
         if (touchX.current == null) return;
-        const dx = (event.changedTouches[0]?.clientX ?? touchX.current) - touchX.current;
+        const dx =
+          (event.changedTouches[0]?.clientX ?? touchX.current) - touchX.current;
         if (Math.abs(dx) > 48) {
           if (dx < 0) onNext();
           else onPrev();

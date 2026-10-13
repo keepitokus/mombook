@@ -32,16 +32,18 @@ test("premium GitHub Pages build includes full book surface", async () => {
   assert.match(html, /Елена Соколова|data-bind="cover.recipientName"/);
   assert.match(html, /og:image/);
   assert.match(html, /#dedication/);
+  assert.match(html, /#contents/);
   assert.match(html, /#chapters/);
   assert.match(html, /#photos/);
-  assert.match(html, /#videos/);
+  assert.match(html, /id="videos"/);
   assert.match(html, /#voices/);
   assert.match(html, /#letters/);
-  assert.match(html, /#order/);
+  assert.match(html, /#closing/);
+  assert.match(html, /id="order"/);
   assert.match(html, /\.\/styles\.css/);
   assert.match(html, /\.\/js\/book\.js/);
 
-  assert.match(styles, /--paper:\s*#f8f3ea/i);
+  assert.match(styles, /--paper:\s*#f6f1e8/i);
   assert.match(styles, /prefers-reduced-motion/);
 
   assert.match(data, /Девочка, которая собирала лето/);
@@ -54,12 +56,13 @@ test("premium GitHub Pages build includes full book surface", async () => {
   assert.match(data, /29 990/);
   assert.match(data, /t\.me\/keepitok/);
 
+  assert.match(bookJs, /initToc/);
   assert.match(bookJs, /initChapters/);
   assert.match(bookJs, /initGallery/);
   assert.match(bookJs, /initVoices/);
   assert.match(bookJs, /initVideos/);
   assert.match(bookJs, /initLetters/);
-  assert.match(bookJs, /Пример размещения видео/);
+  assert.match(bookJs, /семейный ролик|Пример размещения видео/);
 
   const gallery = await readdir(resolve(outDir, "assets/gallery"));
   for (let i = 1; i <= 12; i += 1) {
