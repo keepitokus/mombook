@@ -1,0 +1,297 @@
+import { mkdir, copyFile, readFile, writeFile, rm } from "node:fs/promises";
+import { resolve } from "node:path";
+
+const root = process.cwd();
+const outDir = resolve(root, "gh-pages");
+const assetsDir = resolve(outDir, "assets");
+
+const chapters = [
+  {
+    years: "1974-1989",
+    title: "Девочка, которая собирала лето",
+    place: "Таруса, дом у реки",
+    text:
+      "Лена Соколова росла в доме, где по воскресеньям пахло пирогами, а на подоконнике сушились полевые цветы. Она записывала в тетрадь слова из песен, училась фотографировать на старый Зенит и мечтала однажды увидеть море не на открытке.",
+    memory: "Первая сохранившаяся фотография: Лена на велосипеде, июль 1983.",
+  },
+  {
+    years: "1990-1998",
+    title: "Восемнадцать: песни, письма, первые решения",
+    place: "Москва, общежитие на Соколе",
+    text:
+      "В восемнадцать она слушала Наутилус и Sade, носила бордовую рубашку и говорила, что счастье начинается с честного разговора. В этот период Лена поступила на филфак, впервые жила одна и писала домой письма на тонкой бумаге.",
+    memory: "Вопрос для мамы: какую мечту ты тогда никому не рассказывала?",
+  },
+  {
+    years: "1999-2007",
+    title: "Любовь, которую видно в деталях",
+    place: "Парк Горького, кухня на Новослободской",
+    text:
+      "С будущим мужем, Андреем, Лена познакомилась у книжного лотка. Он купил ей сборник Ахматовой, а она через неделю вернула книгу с закладкой из трамвайного билета. Потом были маленькая свадьба, переезды, первый семейный фотоальбом и традиция варить какао по субботам.",
+    memory: "Аудио-демо: Андрей вспоминает их первое свидание.",
+  },
+  {
+    years: "2008-2026",
+    title: "Мама, которая делала дом живым",
+    place: "Семья Соколовых",
+    text:
+      "Когда родились Ника и Миша, Лена стала тем человеком, который помнит все школьные спектакли, первые победы и смешные детские фразы. Но эта книга возвращает фокус к ней самой: к её смелости, юмору, красоте и тихим победам.",
+    memory: "Финальная глава собирает голоса детей, семейные видео и письмо благодарности.",
+  },
+];
+
+const gallery = [
+  ["1983", "Велосипед у реки", "Первое лето, которое Лена называла своим."],
+  ["1992", "Филфак и красная помада", "Фотография из автомата рядом с метро."],
+  ["1999", "Книжный лоток", "День, когда началась история с Андреем."],
+  ["2008", "Первое какао для Ники", "Субботняя традиция стала семейным ритуалом."],
+  ["2016", "Поездка к морю", "Мама смеётся так, что все кадры получаются живыми."],
+  ["2026", "Эта книга", "Дети собирают историю, которую хочется сохранить."],
+];
+
+const voices = [
+  {
+    name: "Андрей",
+    role: "муж",
+    line: "Я понял, что хочу быть рядом, когда она спорила о книге так, будто защищала целый мир.",
+    duration: "0:34",
+  },
+  {
+    name: "Ника",
+    role: "дочь",
+    line: "Мама умеет делать обычный день праздником. Даже если это просто чай на кухне.",
+    duration: "0:28",
+  },
+  {
+    name: "Миша",
+    role: "сын",
+    line: "Она всегда говорила: попробуй ещё раз. И я до сих пор слышу это перед важными решениями.",
+    duration: "0:31",
+  },
+];
+
+const escapeHtml = (value) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
+const css = (await readFile(resolve(root, "app/globals.css"), "utf8"))
+  .replace('@import "tailwindcss";', "")
+  .replaceAll('url("/mamina-istoriya-hero.png")', 'url("assets/mamina-istoriya-hero.png")');
+
+const chapterTabs = chapters
+  .map(
+    (chapter, index) => `
+      <button class="${index === 0 ? "chapter-tab active" : "chapter-tab"}" data-chapter="${index}" role="tab" aria-selected="${index === 0}">
+        <span>${chapter.years}</span>
+        ${escapeHtml(chapter.title)}
+      </button>`,
+  )
+  .join("");
+
+const galleryCards = gallery
+  .map(
+    ([year, title, caption], index) => `
+      <article class="photo-card tone-${index + 1}">
+        <div class="photo-shine"></div>
+        <span>${year}</span>
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(caption)}</p>
+      </article>`,
+  )
+  .join("");
+
+const voiceCards = voices
+  .map(
+    (voice, index) => `
+      <article class="voice-card">
+        <button class="play" data-voice="${index}" aria-label="Включить демо-голос: ${escapeHtml(voice.name)}"></button>
+        <div>
+          <h3>${escapeHtml(voice.name)}</h3>
+          <span>${escapeHtml(voice.role)} · ${voice.duration}</span>
+          <p>${escapeHtml(voice.line)}</p>
+          <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </article>`,
+  )
+  .join("");
+
+const maxLink =
+  "https://max.ru/:share?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BA%D0%BD%D0%B8%D0%B3%D1%83%20%C2%AB%D0%9C%D0%B0%D0%BC%D0%B8%D0%BD%D0%B0%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%C2%BB.%20%D0%9D%D0%BE%D0%BC%D0%B5%D1%80%20%D0%B4%D0%BB%D1%8F%20MAX:%20%2B79855721069";
+
+const html = `<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мамина история - демо-книга | Я здесь</title>
+    <meta name="description" content="Премиальная интерактивная демо-книга ко Дню матери для проекта «Я здесь»: главы жизни, фото, голоса, видео и письмо.">
+    <meta property="og:title" content="Мамина история - демо-книга">
+    <meta property="og:description" content="Интерактивный пример персональной цифровой книги о маме.">
+    <meta property="og:image" content="assets/mamina-istoriya-hero.png">
+    <link rel="icon" href="assets/favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="site-shell">
+      <nav class="topbar" aria-label="Навигация по демо-книге">
+        <a class="brand" href="#cover" aria-label="Я здесь, к началу книги">
+          <span class="brand-mark">Я</span>
+          <span>Я здесь</span>
+        </a>
+        <div class="nav-links">
+          <a href="#chapters">Главы</a>
+          <a href="#gallery">Фото</a>
+          <a href="#voices">Голоса</a>
+          <a href="#order">Заказать</a>
+        </div>
+      </nav>
+
+      <section class="hero" id="cover">
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="hero-scrim"></div>
+        <div class="hero-content reveal">
+          <p class="demo-pill">Демонстрационная история, семья вымышлена</p>
+          <p class="eyebrow">Премиальная интерактивная книга ко Дню матери</p>
+          <h1>Мамина история</h1>
+          <p class="hero-lead">Персональная цифровая книга о Елене Соколовой: о девочке с мечтами, женщине с характером и маме, чья жизнь стала семейным светом.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#chapters">Открыть демо-книгу</a>
+            <a class="button secondary" href="#order">Заказать к 29 ноября</a>
+          </div>
+        </div>
+        <aside class="cover-card" aria-label="Карточка демо-книги">
+          <span>Соколовы</span>
+          <strong>4 главы</strong>
+          <small>фото, видео, голоса, письмо</small>
+        </aside>
+      </section>
+
+      <section class="intro section-band">
+        <div class="intro-copy reveal">
+          <p class="section-kicker">Идея подарка</p>
+          <h2>Не вещь на полку, а история, где главная героиня - мама.</h2>
+        </div>
+        <div class="intro-grid">
+          <article><span>01</span><h3>Семейный сюжет</h3><p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p></article>
+          <article><span>02</span><h3>Живые голоса</h3><p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p></article>
+          <article><span>03</span><h3>Готово к показу</h3><p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p></article>
+        </div>
+      </section>
+
+      <section class="chapters section-band" id="chapters">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Главы жизни</p>
+          <h2>История раскрывается как семейный фильм.</h2>
+          <p>Нажимайте на годы: каждая глава меняет сцену, подпись и эмоциональный фокус. В настоящем заказе эти блоки заменяются материалами семьи.</p>
+        </div>
+        <div class="chapter-stage">
+          <div class="chapter-list" role="tablist" aria-label="Выбор главы">${chapterTabs}</div>
+          <article class="chapter-card" role="tabpanel">
+            <div class="chapter-progress" aria-label="Прогресс книги 25%"><span style="width: 25%"></span></div>
+            <p class="section-kicker" id="chapter-place">${chapters[0].place}</p>
+            <h3 id="chapter-title">${chapters[0].title}</h3>
+            <p id="chapter-text">${chapters[0].text}</p>
+            <div class="memory-note" id="chapter-memory">${chapters[0].memory}</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="gallery section-band" id="gallery">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Фотогалерея</p>
+          <h2>Архив выглядит бережно, но современно.</h2>
+        </div>
+        <div class="photo-grid">${galleryCards}</div>
+      </section>
+
+      <section class="media section-band" id="voices">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Видео и голоса</p>
+          <h2>В демо показан формат мультимедиа-блоков.</h2>
+          <p>Это не настоящие записи семьи Соколовых, а пример того, как может звучать готовая книга.</p>
+        </div>
+        <div class="media-grid">
+          <article class="video-demo">
+            <div class="video-frame">
+              <button type="button" id="video-toggle" aria-label="Включить демо-видео">Смотреть</button>
+              <div><span>00:42</span><strong>Семейное видео: мама смеётся у моря</strong></div>
+            </div>
+            <p>В реальной книге здесь может быть ролик из семейного архива, поздравление детей или фрагмент интервью с мамой.</p>
+          </article>
+          <div class="voice-stack">${voiceCards}</div>
+        </div>
+      </section>
+
+      <section class="letter section-band">
+        <div class="letter-paper reveal">
+          <p class="section-kicker">Письмо в финале</p>
+          <h2>Мам, теперь эта история - о тебе.</h2>
+          <p>Ты столько лет собирала наши фотографии, смешные фразы, рисунки, школьные победы и маленькие праздники. Мы привыкли, что ты помнишь всё о нас. А теперь нам хочется сохранить всё самое дорогое о тебе.</p>
+          <p>О твоей смелости в восемнадцать. О музыке, которую ты включала, когда никто не видел. О любви, которая началась с книги. О доме, где каждый чувствует: его ждут.</p>
+          <p>Эта демо-книга показывает формат подарка. В настоящей версии здесь будут ваши фотографии, ваши голоса и слова, которые мама захочет перечитать ещё много раз.</p>
+          <span>С любовью, семья</span>
+        </div>
+      </section>
+
+      <section class="order" id="order">
+        <div class="order-inner reveal">
+          <p class="demo-pill">День матери - 29 ноября 2026</p>
+          <h2>Создайте такую книгу для своей мамы.</h2>
+          <p>«Я здесь» помогает собрать фотографии, истории, видео и голоса в персональную интерактивную книгу, которую легко открыть по ссылке и подарить всей семьёй.</p>
+          <div class="order-actions">
+            <a class="button messenger-button max-button" href="${maxLink}" target="_blank" rel="noreferrer" aria-label="Заказать в MAX по номеру +79855721069"><span class="messenger-icon max-icon" aria-hidden="true">MAX</span>Заказать</a>
+            <a class="button messenger-button telegram-button" href="https://t.me/keepitok" target="_blank" rel="noreferrer" aria-label="Заказать в Telegram"><span class="messenger-icon telegram-icon" aria-hidden="true"></span>Заказать</a>
+          </div>
+          <small>Эта страница - демонстрационный пример. Все персонажи, события, подписи и медиа-сцены вымышлены для показа возможностей проекта.</small>
+        </div>
+      </section>
+    </main>
+    <script>
+      const chapters = ${JSON.stringify(chapters)};
+      const tabs = document.querySelectorAll("[data-chapter]");
+      const progress = document.querySelector(".chapter-progress span");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const index = Number(tab.dataset.chapter);
+          const chapter = chapters[index];
+          tabs.forEach((button) => {
+            button.classList.toggle("active", button === tab);
+            button.setAttribute("aria-selected", button === tab ? "true" : "false");
+          });
+          document.querySelector("#chapter-place").textContent = chapter.place;
+          document.querySelector("#chapter-title").textContent = chapter.title;
+          document.querySelector("#chapter-text").textContent = chapter.text;
+          document.querySelector("#chapter-memory").textContent = chapter.memory;
+          progress.style.width = Math.round(((index + 1) / chapters.length) * 100) + "%";
+          document.querySelector(".chapter-progress").setAttribute("aria-label", "Прогресс книги " + Math.round(((index + 1) / chapters.length) * 100) + "%");
+        });
+      });
+      document.querySelector("#video-toggle").addEventListener("click", (event) => {
+        const frame = event.currentTarget.closest(".video-frame");
+        const active = frame.classList.toggle("playing");
+        event.currentTarget.textContent = active ? "Пауза" : "Смотреть";
+      });
+      document.querySelectorAll("[data-voice]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const wasActive = button.classList.contains("active");
+          document.querySelectorAll("[data-voice]").forEach((item) => item.classList.remove("active"));
+          if (!wasActive) button.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
+`;
+
+await rm(outDir, { recursive: true, force: true });
+await mkdir(assetsDir, { recursive: true });
+await copyFile(resolve(root, "public/mamina-istoriya-hero.png"), resolve(assetsDir, "mamina-istoriya-hero.png"));
+await copyFile(resolve(root, "public/favicon.svg"), resolve(assetsDir, "favicon.svg"));
+await writeFile(resolve(outDir, "styles.css"), css);
+await writeFile(resolve(outDir, "index.html"), html);
+await writeFile(resolve(outDir, ".nojekyll"), "");
+
+console.log(`GitHub Pages static build written to ${outDir}`);
