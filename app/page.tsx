@@ -140,6 +140,32 @@ export default function Home() {
     };
   }, [menuOpen, openPhoto]);
 
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const nodes = Array.from(document.querySelectorAll(".reveal"));
+    if (reduceMotion) {
+      nodes.forEach((node) => node.classList.add("is-visible"));
+      return;
+    }
+    const reveal = (node: Element) => node.classList.add("is-visible");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          reveal(entry.target);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px 12% 0px" },
+    );
+    nodes.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.94) reveal(node);
+      else observer.observe(node);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="site-shell">
       {menuOpen ? (
@@ -185,6 +211,11 @@ export default function Home() {
       <section className="hero" id="cover">
         <div className="hero-image" aria-hidden="true" />
         <div className="hero-scrim" />
+        <div className="hero-dust" aria-hidden="true">
+          {Array.from({ length: 14 }, (_, index) => (
+            <span key={index} />
+          ))}
+        </div>
         <div className="hero-content reveal">
           <p className="demo-pill">Демонстрационная история, семья вымышлена</p>
           <p className="eyebrow">Интерактивная книга ко Дню матери</p>
@@ -215,17 +246,17 @@ export default function Home() {
           <h2>Не вещь на полку, а история, где главная героиня - мама.</h2>
         </div>
         <div className="intro-grid">
-          <article>
+          <article className="reveal" style={{ "--stagger": 1 } as CSSProperties}>
             <span>01</span>
             <h3>Семейный сюжет</h3>
             <p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p>
           </article>
-          <article>
+          <article className="reveal" style={{ "--stagger": 2 } as CSSProperties}>
             <span>02</span>
             <h3>Живые голоса</h3>
             <p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p>
           </article>
-          <article>
+          <article className="reveal" style={{ "--stagger": 3 } as CSSProperties}>
             <span>03</span>
             <h3>Готово к показу</h3>
             <p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p>
@@ -270,10 +301,12 @@ export default function Home() {
             <div className="chapter-progress" aria-label={`Прогресс книги ${progress}%`}>
               <span style={{ width: `${progress}%` }} />
             </div>
-            <p className="section-kicker">{chapters[activeChapter].place}</p>
-            <h3>{chapters[activeChapter].title}</h3>
-            <p>{chapters[activeChapter].text}</p>
-            <div className="memory-note">{chapters[activeChapter].memory}</div>
+            <div className="chapter-copy" key={chapters[activeChapter].title}>
+              <p className="section-kicker">{chapters[activeChapter].place}</p>
+              <h3>{chapters[activeChapter].title}</h3>
+              <p>{chapters[activeChapter].text}</p>
+              <div className="memory-note">{chapters[activeChapter].memory}</div>
+            </div>
           </article>
         </div>
       </section>
@@ -284,12 +317,17 @@ export default function Home() {
           <h2>Архив выглядит бережно, но современно.</h2>
         </div>
         <div className="photo-grid">
-          {gallery.map((photo) => (
+          {gallery.map((photo, index) => (
             <button
-              className="photo-card"
+              className="photo-card reveal"
               key={photo.title}
               type="button"
-              style={{ "--photo-image": `url("${photo.image}")` } as CSSProperties}
+              style={
+                {
+                  "--photo-image": `url("${photo.image}")`,
+                  "--stagger": (index % 4) + 1,
+                } as CSSProperties
+              }
               onClick={() => setOpenPhoto(photo)}
               aria-label={`${photo.year}. ${photo.title}. Открыть фото`}
             >
@@ -327,7 +365,10 @@ export default function Home() {
 
           <div className="voice-stack">
             {voices.map((voice, index) => (
-              <article className="voice-card" key={voice.name}>
+              <article
+                className={playingVoice === index ? "voice-card is-playing" : "voice-card"}
+                key={voice.name}
+              >
                 <button
                   className={playingVoice === index ? "play active" : "play"}
                   onClick={() => setPlayingVoice(playingVoice === index ? null : index)}

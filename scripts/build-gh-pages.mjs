@@ -137,8 +137,8 @@ const chapterTabs = chapters
 
 const galleryCards = gallery
   .map(
-    (photo) => `
-      <button type="button" class="photo-card" style="--photo-image: url('${photo.image}')" data-year="${escapeHtml(photo.year)}" data-title="${escapeHtml(photo.title)}" data-caption="${escapeHtml(photo.caption)}" data-image="${photo.image}" aria-label="${escapeHtml(`${photo.year}. ${photo.title}. Открыть фото`)}">
+    (photo, index) => `
+      <button type="button" class="photo-card reveal" style="--photo-image: url('${photo.image}'); --stagger: ${(index % 4) + 1}" data-year="${escapeHtml(photo.year)}" data-title="${escapeHtml(photo.title)}" data-caption="${escapeHtml(photo.caption)}" data-image="${photo.image}" aria-label="${escapeHtml(`${photo.year}. ${photo.title}. Открыть фото`)}">
         <span>${escapeHtml(photo.year)}</span>
         <h3>${escapeHtml(photo.title)}</h3>
         <p>${escapeHtml(photo.caption)}</p>
@@ -199,6 +199,7 @@ const html = `<!doctype html>
       <section class="hero" id="cover">
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-scrim"></div>
+        <div class="hero-dust" aria-hidden="true">${Array.from({ length: 14 }, () => "<span></span>").join("")}</div>
         <div class="hero-content reveal">
           <p class="demo-pill">Демонстрационная история, семья вымышлена</p>
           <p class="eyebrow">Интерактивная книга ко Дню матери</p>
@@ -222,9 +223,9 @@ const html = `<!doctype html>
           <h2>Не вещь на полку, а история, где главная героиня - мама.</h2>
         </div>
         <div class="intro-grid">
-          <article><span>01</span><h3>Семейный сюжет</h3><p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p></article>
-          <article><span>02</span><h3>Живые голоса</h3><p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p></article>
-          <article><span>03</span><h3>Готово к показу</h3><p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p></article>
+          <article class="reveal" style="--stagger: 1"><span>01</span><h3>Семейный сюжет</h3><p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p></article>
+          <article class="reveal" style="--stagger: 2"><span>02</span><h3>Живые голоса</h3><p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p></article>
+          <article class="reveal" style="--stagger: 3"><span>03</span><h3>Готово к показу</h3><p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p></article>
         </div>
       </section>
 
@@ -238,10 +239,12 @@ const html = `<!doctype html>
           <div class="chapter-list" role="tablist" aria-label="Выбор главы">${chapterTabs}</div>
           <article class="chapter-card" role="tabpanel" id="chapter-card">
             <div class="chapter-progress" aria-label="Прогресс книги 25%"><span style="width: 25%"></span></div>
-            <p class="section-kicker" id="chapter-place">${chapters[0].place}</p>
-            <h3 id="chapter-title">${chapters[0].title}</h3>
-            <p id="chapter-text">${chapters[0].text}</p>
-            <div class="memory-note" id="chapter-memory">${chapters[0].memory}</div>
+            <div class="chapter-copy" id="chapter-copy">
+              <p class="section-kicker" id="chapter-place">${chapters[0].place}</p>
+              <h3 id="chapter-title">${chapters[0].title}</h3>
+              <p id="chapter-text">${chapters[0].text}</p>
+              <div class="memory-note" id="chapter-memory">${chapters[0].memory}</div>
+            </div>
           </article>
         </div>
       </section>
@@ -325,6 +328,9 @@ const html = `<!doctype html>
           document.querySelector("#chapter-title").textContent = chapter.title;
           document.querySelector("#chapter-text").textContent = chapter.text;
           document.querySelector("#chapter-memory").textContent = chapter.memory;
+          const copy = document.querySelector("#chapter-copy");
+          const nextCopy = copy.cloneNode(true);
+          copy.replaceWith(nextCopy);
           progress.style.width = Math.round(((index + 1) / chapters.length) * 100) + "%";
           document.querySelector(".chapter-progress").setAttribute("aria-label", "Прогресс книги " + Math.round(((index + 1) / chapters.length) * 100) + "%");
           chapterCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -338,10 +344,35 @@ const html = `<!doctype html>
       document.querySelectorAll("[data-voice]").forEach((button) => {
         button.addEventListener("click", () => {
           const wasActive = button.classList.contains("active");
-          document.querySelectorAll("[data-voice]").forEach((item) => item.classList.remove("active"));
-          if (!wasActive) button.classList.add("active");
+          document.querySelectorAll("[data-voice]").forEach((item) => {
+            item.classList.remove("active");
+            item.closest(".voice-card")?.classList.remove("is-playing");
+          });
+          if (!wasActive) {
+            button.classList.add("active");
+            button.closest(".voice-card")?.classList.add("is-playing");
+          }
         });
       });
+
+      const revealNodes = Array.from(document.querySelectorAll(".reveal"));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reveal = (node) => node.classList.add("is-visible");
+      if (reduceMotion) {
+        revealNodes.forEach(reveal);
+      } else {
+        const observer = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+          }
+        }, { threshold: 0.08, rootMargin: "0px 0px 12% 0px" });
+        revealNodes.forEach((node) => {
+          if (node.getBoundingClientRect().top < window.innerHeight * 0.94) reveal(node);
+          else observer.observe(node);
+        });
+      }
 
       const overlay = document.querySelector(".nav-overlay");
       const toggle = document.querySelector(".menu-toggle");
