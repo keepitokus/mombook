@@ -111,8 +111,19 @@ export function PremiumBook({ book }: { book: PremiumBookData }) {
       ) : null}
 
       <header className="topbar">
-        <a className="brand" href="#cover" onClick={() => setMenuOpen(false)}>
-          Я здесь<span>.</span>
+        <a
+          className="brand"
+          href="#cover"
+          aria-label="Я здесь, к началу книги"
+          onClick={() => setMenuOpen(false)}
+        >
+          <img
+            className="brand-logo"
+            src="/ya-zdes-logo.jpg"
+            alt=""
+            width={112}
+            height={112}
+          />
         </a>
         <button
           className={menuOpen ? "menu-toggle is-open" : "menu-toggle"}
