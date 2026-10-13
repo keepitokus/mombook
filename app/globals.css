@@ -109,6 +109,10 @@ button {
   position: relative;
 }
 
+section {
+  scroll-margin-top: 112px;
+}
+
 .hero-image {
   background-image: url("/mamina-istoriya-hero.png");
   background-position: center;
@@ -120,8 +124,8 @@ button {
 
 .hero-scrim {
   background:
-    linear-gradient(90deg, rgba(24, 22, 20, 0.72) 0%, rgba(24, 22, 20, 0.42) 42%, rgba(24, 22, 20, 0.08) 100%),
-    linear-gradient(180deg, rgba(24, 22, 20, 0.2), rgba(24, 22, 20, 0.58));
+    linear-gradient(90deg, rgba(20, 18, 16, 0.86) 0%, rgba(20, 18, 16, 0.62) 46%, rgba(20, 18, 16, 0.18) 100%),
+    linear-gradient(180deg, rgba(20, 18, 16, 0.34), rgba(20, 18, 16, 0.68));
   inset: 0;
   position: absolute;
 }
@@ -131,6 +135,7 @@ button {
   max-width: 700px;
   padding-top: 4vh;
   position: relative;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.55);
   z-index: 1;
 }
 
@@ -145,16 +150,18 @@ button {
 }
 
 .demo-pill {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(36, 35, 33, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 999px;
   display: inline-flex;
   padding: 9px 13px;
+  text-shadow: none;
 }
 
 .eyebrow {
   color: #f7dca8;
   margin-top: 34px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.66);
 }
 
 h1,
@@ -170,13 +177,18 @@ h1 {
   line-height: 0.86;
   margin: 18px 0 24px;
   max-width: 720px;
+  text-wrap: balance;
 }
 
 .hero-lead {
+  background: rgba(20, 18, 16, 0.36);
+  border-left: 3px solid rgba(247, 220, 168, 0.74);
+  border-radius: 0 8px 8px 0;
   font-size: clamp(18px, 1.8vw, 23px);
   line-height: 1.55;
   margin: 0 0 34px;
   max-width: 650px;
+  padding: 12px 18px 14px;
 }
 
 .button {
@@ -200,8 +212,8 @@ h1 {
 }
 
 .button.secondary {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(36, 35, 33, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.58);
   color: white;
 }
 
@@ -300,6 +312,13 @@ h1 {
   text-align: center;
 }
 
+.section-heading h2,
+.intro h2,
+.letter h2,
+.order h2 {
+  text-wrap: balance;
+}
+
 .chapter-stage {
   display: grid;
   gap: 24px;
@@ -341,7 +360,7 @@ h1 {
 
 .chapter-card {
   background:
-    linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(255, 253, 248, 0.82)),
+    linear-gradient(135deg, rgba(255, 253, 248, 0.98), rgba(255, 253, 248, 0.9)),
     url("/mamina-istoriya-hero.png");
   background-position: center;
   background-size: cover;
@@ -407,7 +426,7 @@ h1 {
   justify-content: end;
   min-height: 320px;
   overflow: hidden;
-  padding: 22px;
+  padding: 28px;
   position: relative;
 }
 
@@ -419,7 +438,7 @@ h1 {
 
 .photo-card::before {
   background:
-    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.62) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.26) 42%, rgba(0, 0, 0, 0.82) 100%),
     url("/mamina-istoriya-hero.png");
   background-size: cover;
   content: "";
@@ -466,6 +485,7 @@ h1 {
 .photo-card p {
   line-height: 1.5;
   margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.72);
 }
 
 .media {
@@ -488,17 +508,17 @@ h1 {
 
 .video-demo,
 .voice-card {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  padding: 18px;
+  padding: 22px;
 }
 
 .video-frame {
   align-items: end;
   aspect-ratio: 16 / 10;
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.56)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.78)),
     url("/mamina-istoriya-hero.png");
   background-position: center;
   background-size: cover;
@@ -506,7 +526,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   overflow: hidden;
-  padding: 22px;
+  padding: 28px;
 }
 
 .video-frame.playing {
@@ -532,9 +552,13 @@ h1 {
 }
 
 .video-frame div {
+  background: rgba(20, 18, 16, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
   display: grid;
   gap: 6px;
   max-width: 310px;
+  padding: 14px 16px;
   text-align: right;
 }
 
@@ -570,7 +594,7 @@ h1 {
 }
 
 .voice-card p {
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.88);
   line-height: 1.55;
 }
 
@@ -625,7 +649,7 @@ h1 {
 
 .order {
   background:
-    linear-gradient(120deg, rgba(36, 35, 33, 0.72), rgba(36, 35, 33, 0.46)),
+    linear-gradient(120deg, rgba(24, 22, 20, 0.86), rgba(24, 22, 20, 0.66)),
     url("/mamina-istoriya-hero.png");
   background-position: center;
   background-size: cover;
@@ -634,13 +658,18 @@ h1 {
 }
 
 .order-inner {
+  background: rgba(24, 22, 20, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
   margin: 0 auto;
   max-width: 820px;
+  padding: clamp(28px, 5vw, 56px);
   text-align: center;
 }
 
 .order p {
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 18px;
 }
 
@@ -650,7 +679,7 @@ h1 {
 }
 
 .order small {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.82);
   display: block;
   line-height: 1.6;
 }
@@ -707,8 +736,8 @@ h1 {
 
   .hero-scrim {
     background:
-      linear-gradient(180deg, rgba(24, 22, 20, 0.44), rgba(24, 22, 20, 0.78)),
-      linear-gradient(90deg, rgba(24, 22, 20, 0.42), rgba(24, 22, 20, 0.12));
+      linear-gradient(180deg, rgba(20, 18, 16, 0.58), rgba(20, 18, 16, 0.86)),
+      linear-gradient(90deg, rgba(20, 18, 16, 0.58), rgba(20, 18, 16, 0.18));
   }
 
   .hero-content {
@@ -754,6 +783,10 @@ h1 {
 }
 
 @media (max-width: 620px) {
+  section {
+    scroll-margin-top: 132px;
+  }
+
   .topbar {
     align-items: flex-start;
     flex-direction: column;
@@ -773,7 +806,7 @@ h1 {
   }
 
   .hero {
-    padding: 142px 18px 42px;
+    padding: 146px 18px 50px;
   }
 
   .hero-image {
@@ -786,6 +819,7 @@ h1 {
 
   .hero-lead {
     font-size: 17px;
+    padding: 12px 14px 14px;
   }
 
   .hero-actions,
@@ -799,7 +833,7 @@ h1 {
   }
 
   .section-band {
-    padding: 64px 18px;
+    padding: 70px 18px;
   }
 
   .intro h2,
@@ -815,7 +849,7 @@ h1 {
 
   .chapter-card {
     min-height: auto;
-    padding: 24px;
+    padding: 28px 22px;
   }
 
   .chapter-card h3 {
@@ -832,6 +866,7 @@ h1 {
 
   .photo-card {
     min-height: 280px;
+    padding: 26px;
   }
 
   .video-frame {
@@ -841,6 +876,7 @@ h1 {
   }
 
   .video-frame div {
+    max-width: 100%;
     text-align: left;
   }
 }
