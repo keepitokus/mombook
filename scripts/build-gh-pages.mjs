@@ -410,13 +410,27 @@ await copyFile(resolve(root, "public/ya-zdes-logo.jpg"), resolve(assetsDir, "ya-
 const galleryOut = resolve(assetsDir, "gallery");
 await mkdir(galleryOut, { recursive: true });
 for (const file of await readdir(resolve(root, "public/gallery"))) {
+  if (!/\.(jpe?g|png|webp|avif|gif|svg)$/i.test(file)) continue;
   await copyFile(resolve(root, "public/gallery", file), resolve(galleryOut, file));
 }
+
+const mediaSrc = resolve(root, "public/media");
+const mediaOut = resolve(assetsDir, "media");
+await mkdir(mediaOut, { recursive: true });
+for (const file of await readdir(mediaSrc)) {
+  if (!/\.(wav|mp3|m4a|ogg|webm|mp4)$/i.test(file)) continue;
+  await copyFile(resolve(mediaSrc, file), resolve(mediaOut, file));
+}
+
 await writeFile(resolve(outDir, "styles.css"), css);
 await writeFile(resolve(outDir, "index.html"), html);
 await writeFile(resolve(outDir, ".nojekyll"), "");
-await mkdir(resolve(outDir, "premium"), { recursive: true });
-await copyFile(resolve(root, "premium/index.html"), resolve(outDir, "premium/index.html"));
 
+const premiumOut = resolve(outDir, "premium");
+await mkdir(resolve(premiumOut, "js"), { recursive: true });
+await copyFile(resolve(root, "premium/index.html"), resolve(premiumOut, "index.html"));
+await copyFile(resolve(root, "premium/styles.css"), resolve(premiumOut, "styles.css"));
+await copyFile(resolve(root, "premium/js/data.js"), resolve(premiumOut, "js/data.js"));
+await copyFile(resolve(root, "premium/js/book.js"), resolve(premiumOut, "js/book.js"));
 
 console.log(`GitHub Pages static build written to ${outDir}`);

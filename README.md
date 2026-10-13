@@ -85,11 +85,39 @@ or enforce explicit server-side membership or allowlist checks.
 Use SIWC for account pages, user-specific dashboards, saved records, and write
 actions tied to the current ChatGPT user. Leave public content anonymous.
 
+## Книги ко Дню матери
+
+- Базовая демо-книга «Мама, спасибо» (9 990 ₽): `/` и GitHub Pages `https://keepitokus.github.io/mombook/`
+- Премиальная демо-книга «Мамина история» (29 990 ₽): `/premium` и `https://keepitokus.github.io/mombook/premium/`
+
+Данные премиальной книги отделены от UI: `lib/premium/types.ts`, `lib/premium/sokolov-demo.ts`.
+Статическая версия для GitHub Pages лежит в `premium/` (`index.html`, `styles.css`, `js/`).
+
+### Локальный запуск
+
+```bash
+npm install
+npm run dev          # React: / и /premium
+npm run build:gh-pages
+npx serve gh-pages   # статика как на GitHub Pages; открыть /premium/
+```
+
+### Публикация премиальной версии
+
+```bash
+npm run build:gh-pages
+# задеплоить содержимое gh-pages/ в ветку gh-pages
+# премиум откроется по адресу .../mombook/premium/
+```
+
+Нельзя считать материалы приватными только из‑за «секретной» ссылки: GitHub Pages публичен.
+
 ## Useful Commands
 
 - `npm run dev`: start local development
 - `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
+- `npm run build:gh-pages`: static site for GitHub Pages (base + premium)
+- `npm test`: verify base/premium structure and GH Pages premium output
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 
 ## Learn More
