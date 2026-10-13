@@ -192,6 +192,7 @@ const html = `<!doctype html>
           <a href="#chapters">Главы</a>
           <a href="#gallery">Фото</a>
           <a href="#voices">Голоса</a>
+          <a href="#letter">Письмо</a>
           <a href="#order">Заказать</a>
         </div>
       </nav>
@@ -275,14 +276,14 @@ const html = `<!doctype html>
         </div>
       </section>
 
-      <section class="letter section-band">
+      <section class="letter section-band" id="letter">
+        <p class="section-kicker letter-label">Письмо в финале</p>
         <div class="letter-paper reveal">
-          <p class="section-kicker">Письмо в финале</p>
-          <h2>Мам, теперь эта история - о тебе.</h2>
+          <h2>Мам, теперь эта история — о тебе.</h2>
           <p>Ты столько лет собирала наши фотографии, смешные фразы, рисунки, школьные победы и маленькие праздники. Мы привыкли, что ты помнишь всё о нас. А теперь нам хочется сохранить всё самое дорогое о тебе.</p>
           <p>О твоей смелости в восемнадцать. О музыке, которую ты включала, когда никто не видел. О любви, которая началась с книги. О доме, где каждый чувствует: его ждут.</p>
           <p>Эта демо-книга показывает формат подарка. В настоящей версии здесь будут ваши фотографии, ваши голоса и слова, которые мама захочет перечитать ещё много раз.</p>
-          <span>С любовью, семья</span>
+          <p class="letter-sign">С любовью, семья</p>
         </div>
       </section>
 
@@ -292,8 +293,8 @@ const html = `<!doctype html>
           <h2>Создайте такую книгу для своей мамы.</h2>
           <p>«Я здесь» помогает собрать фотографии, истории, видео и голоса в персональную интерактивную книгу, которую легко открыть по ссылке и подарить всей семьёй.</p>
           <div class="order-actions">
-            <a class="button messenger-button max-button" href="${maxLink}" target="_blank" rel="noreferrer" aria-label="Заказать в MAX по номеру +79855721069"><span class="messenger-icon max-icon" aria-hidden="true">MAX</span>Заказать</a>
-            <a class="button messenger-button telegram-button" href="https://t.me/keepitok" target="_blank" rel="noreferrer" aria-label="Заказать в Telegram"><span class="messenger-icon telegram-icon" aria-hidden="true"></span>Заказать</a>
+            <a class="button messenger-button max-button" href="${maxLink}" target="_blank" rel="noreferrer" aria-label="Заказать в MAX по номеру +79855721069"><img class="messenger-icon" src="assets/icons/max.svg" alt="" width="32" height="32">Заказать</a>
+            <a class="button messenger-button telegram-button" href="https://t.me/keepitok" target="_blank" rel="noreferrer" aria-label="Заказать в Telegram"><img class="messenger-icon" src="assets/icons/telegram.svg" alt="" width="32" height="32">Заказать</a>
           </div>
           <small>Эта страница - демонстрационный пример. Все персонажи, события, подписи и медиа-сцены вымышлены для показа возможностей проекта.</small>
         </div>
@@ -438,6 +439,10 @@ await mkdir(assetsDir, { recursive: true });
 await copyFile(resolve(root, "public/mamina-istoriya-hero.png"), resolve(assetsDir, "mamina-istoriya-hero.png"));
 await copyFile(resolve(root, "public/favicon.svg"), resolve(assetsDir, "favicon.svg"));
 await copyFile(resolve(root, "public/ya-zdes-logo.jpg"), resolve(assetsDir, "ya-zdes-logo.jpg"));
+const iconsOut = resolve(assetsDir, "icons");
+await mkdir(iconsOut, { recursive: true });
+await copyFile(resolve(root, "public/icons/max.svg"), resolve(iconsOut, "max.svg"));
+await copyFile(resolve(root, "public/icons/telegram.svg"), resolve(iconsOut, "telegram.svg"));
 const galleryOut = resolve(assetsDir, "gallery");
 await mkdir(galleryOut, { recursive: true });
 for (const file of await readdir(resolve(root, "public/gallery"))) {

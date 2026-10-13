@@ -204,6 +204,7 @@ export default function Home() {
           <a href="#chapters" onClick={closeMenu}>Главы</a>
           <a href="#gallery" onClick={closeMenu}>Фото</a>
           <a href="#voices" onClick={closeMenu}>Голоса</a>
+          <a href="#letter" onClick={closeMenu}>Письмо</a>
           <a href="#order" onClick={closeMenu}>Заказать</a>
         </div>
       </nav>
@@ -388,10 +389,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="letter section-band">
+      <section className="letter section-band" id="letter">
+        <p className="section-kicker letter-label">Письмо в финале</p>
         <div className="letter-paper reveal">
-          <p className="section-kicker">Письмо в финале</p>
-          <h2>Мам, теперь эта история - о тебе.</h2>
+          <h2>Мам, теперь эта история — о тебе.</h2>
           <p>
             Ты столько лет собирала наши фотографии, смешные фразы, рисунки,
             школьные победы и маленькие праздники. Мы привыкли, что ты помнишь
@@ -407,7 +408,7 @@ export default function Home() {
             будут ваши фотографии, ваши голоса и слова, которые мама захочет
             перечитать ещё много раз.
           </p>
-          <span>С любовью, семья</span>
+          <p className="letter-sign">С любовью, семья</p>
         </div>
       </section>
 
@@ -428,7 +429,7 @@ export default function Home() {
               rel="noreferrer"
               aria-label="Заказать в MAX по номеру +79855721069"
             >
-              <span className="messenger-icon max-icon" aria-hidden="true">MAX</span>
+              <img className="messenger-icon" src="/icons/max.svg" alt="" width={32} height={32} />
               Заказать
             </a>
             <a
@@ -438,7 +439,7 @@ export default function Home() {
               rel="noreferrer"
               aria-label="Заказать в Telegram"
             >
-              <span className="messenger-icon telegram-icon" aria-hidden="true" />
+              <img className="messenger-icon" src="/icons/telegram.svg" alt="" width={32} height={32} />
               Заказать
             </a>
           </div>
