@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 
 const chapters = [
   {
@@ -38,12 +39,54 @@ const chapters = [
 ];
 
 const gallery = [
-  ["1983", "Велосипед у реки", "Первое лето, которое Лена называла своим."],
-  ["1992", "Филфак и красная помада", "Фотография из автомата рядом с метро."],
-  ["1999", "Книжный лоток", "День, когда началась история с Андреем."],
-  ["2008", "Первое какао для Ники", "Субботняя традиция стала семейным ритуалом."],
-  ["2016", "Поездка к морю", "Мама смеётся так, что все кадры получаются живыми."],
-  ["2026", "Эта книга", "Дети собирают историю, которую хочется сохранить."],
+  {
+    year: "1983",
+    title: "У реки",
+    caption: "Лена на велосипеде: первое лето, которое она называла своим.",
+    image: "/gallery/mom-01.jpg",
+  },
+  {
+    year: "2008",
+    title: "Вверх",
+    caption: "Мама поднимает ребёнка так, будто весь дом становится легче.",
+    image: "/gallery/mom-02.jpg",
+  },
+  {
+    year: "2012",
+    title: "Семейный портрет",
+    caption: "Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему.",
+    image: "/gallery/mom-03.jpg",
+  },
+  {
+    year: "2018",
+    title: "На холме",
+    caption: "Она ведёт детей к закату — и кажется, что время останавливается.",
+    image: "/gallery/mom-04.jpg",
+  },
+  {
+    year: "2026",
+    title: "Стол с памятью",
+    caption: "Мама разбирает старые снимки, из которых потом собирается книга.",
+    image: "/gallery/mom-05.jpg",
+  },
+  {
+    year: "2026",
+    title: "Смотрим вместе",
+    caption: "Дети сидят рядом с мамой и листают её историю на экране.",
+    image: "/gallery/mom-06.jpg",
+  },
+  {
+    year: "2026",
+    title: "Эта книга",
+    caption: "Портрет, с которого начинается персональная книга о ней.",
+    image: "/gallery/mom-07.jpg",
+  },
+  {
+    year: "2026",
+    title: "Тихий вечер",
+    caption: "Когда дом затихает, и мама остаётся наедине с собой.",
+    image: "/gallery/mom-08.jpg",
+  },
 ];
 
 const voices = [
@@ -71,24 +114,71 @@ export default function Home() {
   const [activeChapter, setActiveChapter] = useState(0);
   const [playingVoice, setPlayingVoice] = useState<number | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [openPhoto, setOpenPhoto] = useState<(typeof gallery)[number] | null>(null);
+  const chapterCardRef = useRef<HTMLElement>(null);
 
   const progress = useMemo(
     () => Math.round(((activeChapter + 1) / chapters.length) * 100),
     [activeChapter],
   );
 
+  const closeMenu = () => setMenuOpen(false);
+  const closePhoto = () => setOpenPhoto(null);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen || openPhoto ? "hidden" : "";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (openPhoto) setOpenPhoto(null);
+      else setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen, openPhoto]);
+
   return (
     <main className="site-shell">
-      <nav className="topbar" aria-label="Навигация по демо-книге">
-        <a className="brand" href="#cover" aria-label="Я здесь, к началу книги">
-          <span className="brand-mark">Я</span>
-          <span>Я здесь</span>
+      {menuOpen ? (
+        <button
+          className="nav-overlay"
+          type="button"
+          aria-label="Закрыть меню"
+          onClick={closeMenu}
+        />
+      ) : null}
+      <nav className={menuOpen ? "topbar is-open" : "topbar"} aria-label="Навигация по демо-книге">
+        <a className="brand" href="#cover" aria-label="Я здесь, к началу книги" onClick={closeMenu}>
+          <img
+            className="brand-logo"
+            src="/ya-zdes-logo.jpg"
+            alt=""
+            width={112}
+            height={112}
+          />
         </a>
-        <div className="nav-links">
-          <a href="#chapters">Главы</a>
-          <a href="#gallery">Фото</a>
-          <a href="#voices">Голоса</a>
-          <a href="#order">Заказать</a>
+        <button
+          className={menuOpen ? "menu-toggle is-open" : "menu-toggle"}
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="site-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span className="sr-only">{menuOpen ? "Закрыть меню" : "Открыть меню"}</span>
+          <span className="menu-icon" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+        </button>
+        <div className={menuOpen ? "nav-links is-open" : "nav-links"} id="site-menu">
+          <a href="#chapters" onClick={closeMenu}>Главы</a>
+          <a href="#gallery" onClick={closeMenu}>Фото</a>
+          <a href="#voices" onClick={closeMenu}>Голоса</a>
+          <a href="#order" onClick={closeMenu}>Заказать</a>
         </div>
       </nav>
 
@@ -159,17 +249,24 @@ export default function Home() {
               <button
                 className={activeChapter === index ? "chapter-tab active" : "chapter-tab"}
                 key={chapter.title}
-                onClick={() => setActiveChapter(index)}
+                onClick={() => {
+                  setActiveChapter(index);
+                  chapterCardRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                  });
+                }}
                 role="tab"
+                aria-label={`${chapter.years}. ${chapter.title}`}
                 aria-selected={activeChapter === index}
               >
-                <span>{chapter.years}</span>
-                {chapter.title}
+                <span className="chapter-tab-years">{chapter.years}</span>
+                <span className="chapter-tab-title">{chapter.title}</span>
               </button>
             ))}
           </div>
 
-          <article className="chapter-card" role="tabpanel">
+          <article className="chapter-card" role="tabpanel" ref={chapterCardRef}>
             <div className="chapter-progress" aria-label={`Прогресс книги ${progress}%`}>
               <span style={{ width: `${progress}%` }} />
             </div>
@@ -187,13 +284,19 @@ export default function Home() {
           <h2>Архив выглядит бережно, но современно.</h2>
         </div>
         <div className="photo-grid">
-          {gallery.map(([year, title, caption], index) => (
-            <article className={`photo-card tone-${index + 1}`} key={title}>
-              <div className="photo-shine" />
-              <span>{year}</span>
-              <h3>{title}</h3>
-              <p>{caption}</p>
-            </article>
+          {gallery.map((photo) => (
+            <button
+              className="photo-card"
+              key={photo.title}
+              type="button"
+              style={{ "--photo-image": `url("${photo.image}")` } as CSSProperties}
+              onClick={() => setOpenPhoto(photo)}
+              aria-label={`${photo.year}. ${photo.title}. Открыть фото`}
+            >
+              <span>{photo.year}</span>
+              <h3>{photo.title}</h3>
+              <p>{photo.caption}</p>
+            </button>
           ))}
         </div>
       </section>
@@ -304,6 +407,36 @@ export default function Home() {
           </small>
         </div>
       </section>
+
+      {openPhoto
+        ? createPortal(
+            <div className="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+              <button
+                className="lightbox-backdrop"
+                type="button"
+                aria-label="Закрыть фото"
+                onClick={closePhoto}
+              />
+              <button
+                className="lightbox-close"
+                type="button"
+                aria-label="Закрыть фото"
+                onClick={closePhoto}
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+              <figure className="lightbox-figure">
+                <img src={openPhoto.image} alt="" />
+                <figcaption>
+                  <span>{openPhoto.year}</span>
+                  <strong id="lightbox-title">{openPhoto.title}</strong>
+                  <p>{openPhoto.caption}</p>
+                </figcaption>
+              </figure>
+            </div>,
+            document.body,
+          )
+        : null}
     </main>
   );
 }
