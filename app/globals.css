@@ -730,6 +730,53 @@ h1 {
   margin: 32px 0 24px;
 }
 
+.messenger-button {
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+}
+
+.max-button {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.telegram-button {
+  background: #229ed9;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  box-shadow: 0 18px 40px rgba(34, 158, 217, 0.26);
+}
+
+.messenger-icon {
+  align-items: center;
+  background: white;
+  border-radius: 50%;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 28px;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+}
+
+.max-icon {
+  color: #111827;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.telegram-icon::before {
+  border-bottom: 6px solid transparent;
+  border-right: 15px solid #229ed9;
+  border-top: 6px solid transparent;
+  content: "";
+  display: block;
+  transform: translateX(-1px) rotate(-18deg);
+}
+
 .order small {
   color: rgba(255, 255, 255, 0.82);
   display: block;

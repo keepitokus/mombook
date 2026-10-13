@@ -277,11 +277,25 @@ export default function Home() {
             подарить всей семьёй.
           </p>
           <div className="order-actions">
-            <a className="button primary" href="mailto:hello@example.com?subject=Хочу%20книгу%20для%20мамы">
-              Оставить заявку
+            <a
+              className="button messenger-button max-button"
+              href="https://max.ru/:share?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BA%D0%BD%D0%B8%D0%B3%D1%83%20%C2%AB%D0%9C%D0%B0%D0%BC%D0%B8%D0%BD%D0%B0%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%C2%BB.%20%D0%9D%D0%BE%D0%BC%D0%B5%D1%80%20%D0%B4%D0%BB%D1%8F%20MAX:%20%2B79855721069"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Заказать в MAX по номеру +79855721069"
+            >
+              <span className="messenger-icon max-icon" aria-hidden="true">MAX</span>
+              Заказать
             </a>
-            <a className="button secondary" href="#cover">
-              Пересмотреть демо
+            <a
+              className="button messenger-button telegram-button"
+              href="https://t.me/keepitok"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Заказать в Telegram"
+            >
+              <span className="messenger-icon telegram-icon" aria-hidden="true" />
+              Заказать
             </a>
           </div>
           <small>
