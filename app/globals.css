@@ -107,6 +107,27 @@ button {
   display: none;
 }
 
+.nav-overlay {
+  background: rgba(20, 18, 16, 0.28);
+  border: 0;
+  inset: 0;
+  position: fixed;
+  z-index: 9;
+}
+
+.nav-overlay[hidden] {
+  display: none !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .brand,
+  .nav-links,
+  .menu-toggle {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .sr-only {
   border: 0;
   clip: rect(0 0 0 0);
@@ -1120,13 +1141,8 @@ h1 {
     text-align: left;
   }
 
-  .nav-overlay {
-    background: rgba(20, 18, 16, 0.28);
-    border: 0;
+  .nav-overlay:not([hidden]) {
     display: block;
-    inset: 0;
-    position: fixed;
-    z-index: 9;
   }
 
   section {
