@@ -33,6 +33,7 @@
       <section class="hero" id="cover">
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-scrim"></div>
+        <div class="hero-dust" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="hero-content reveal">
           <p class="demo-pill">Демонстрационная история, семья вымышлена</p>
           <p class="eyebrow">Интерактивная книга ко Дню матери</p>
@@ -56,9 +57,9 @@
           <h2>Не вещь на полку, а история, где главная героиня - мама.</h2>
         </div>
         <div class="intro-grid">
-          <article><span>01</span><h3>Семейный сюжет</h3><p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p></article>
-          <article><span>02</span><h3>Живые голоса</h3><p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p></article>
-          <article><span>03</span><h3>Готово к показу</h3><p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p></article>
+          <article class="reveal" style="--stagger: 1"><span>01</span><h3>Семейный сюжет</h3><p>Главы жизни, фотографии, подписи, даты и тёплые детали собираются в цельный рассказ.</p></article>
+          <article class="reveal" style="--stagger: 2"><span>02</span><h3>Живые голоса</h3><p>Демо показывает, как в книгу могут быть встроены поздравления, воспоминания и короткие видео.</p></article>
+          <article class="reveal" style="--stagger: 3"><span>03</span><h3>Готово к показу</h3><p>Книгу можно открыть с телефона, отправить родным и показать маме в День матери.</p></article>
         </div>
       </section>
 
@@ -88,10 +89,12 @@
       </button></div>
           <article class="chapter-card" role="tabpanel" id="chapter-card">
             <div class="chapter-progress" aria-label="Прогресс книги 25%"><span style="width: 25%"></span></div>
-            <p class="section-kicker" id="chapter-place">Таруса, дом у реки</p>
-            <h3 id="chapter-title">Девочка, которая собирала лето</h3>
-            <p id="chapter-text">Лена Соколова росла в доме, где по воскресеньям пахло пирогами, а на подоконнике сушились полевые цветы. Она записывала в тетрадь слова из песен, училась фотографировать на старый Зенит и мечтала однажды увидеть море не на открытке.</p>
-            <div class="memory-note" id="chapter-memory">Первая сохранившаяся фотография: Лена на велосипеде, июль 1983.</div>
+            <div class="chapter-copy" id="chapter-copy">
+              <p class="section-kicker" id="chapter-place">Таруса, дом у реки</p>
+              <h3 id="chapter-title">Девочка, которая собирала лето</h3>
+              <p id="chapter-text">Лена Соколова росла в доме, где по воскресеньям пахло пирогами, а на подоконнике сушились полевые цветы. Она записывала в тетрадь слова из песен, училась фотографировать на старый Зенит и мечтала однажды увидеть море не на открытке.</p>
+              <div class="memory-note" id="chapter-memory">Первая сохранившаяся фотография: Лена на велосипеде, июль 1983.</div>
+            </div>
           </article>
         </div>
       </section>
@@ -102,42 +105,42 @@
           <h2>Архив выглядит бережно, но современно.</h2>
         </div>
         <div class="photo-grid">
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-01.jpg')" data-year="1983" data-title="У реки" data-caption="Лена на велосипеде: первое лето, которое она называла своим." data-image="assets/gallery/mom-01.jpg" aria-label="1983. У реки. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-01.jpg'); --stagger: 1" data-year="1983" data-title="У реки" data-caption="Лена на велосипеде: первое лето, которое она называла своим." data-image="assets/gallery/mom-01.jpg" aria-label="1983. У реки. Открыть фото">
         <span>1983</span>
         <h3>У реки</h3>
         <p>Лена на велосипеде: первое лето, которое она называла своим.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-02.jpg')" data-year="2008" data-title="Вверх" data-caption="Мама поднимает ребёнка так, будто весь дом становится легче." data-image="assets/gallery/mom-02.jpg" aria-label="2008. Вверх. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-02.jpg'); --stagger: 2" data-year="2008" data-title="Вверх" data-caption="Мама поднимает ребёнка так, будто весь дом становится легче." data-image="assets/gallery/mom-02.jpg" aria-label="2008. Вверх. Открыть фото">
         <span>2008</span>
         <h3>Вверх</h3>
         <p>Мама поднимает ребёнка так, будто весь дом становится легче.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-03.jpg')" data-year="2012" data-title="Семейный портрет" data-caption="Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему." data-image="assets/gallery/mom-03.jpg" aria-label="2012. Семейный портрет. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-03.jpg'); --stagger: 3" data-year="2012" data-title="Семейный портрет" data-caption="Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему." data-image="assets/gallery/mom-03.jpg" aria-label="2012. Семейный портрет. Открыть фото">
         <span>2012</span>
         <h3>Семейный портрет</h3>
         <p>Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-04.jpg')" data-year="2018" data-title="На холме" data-caption="Она ведёт детей к закату — и кажется, что время останавливается." data-image="assets/gallery/mom-04.jpg" aria-label="2018. На холме. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-04.jpg'); --stagger: 4" data-year="2018" data-title="На холме" data-caption="Она ведёт детей к закату — и кажется, что время останавливается." data-image="assets/gallery/mom-04.jpg" aria-label="2018. На холме. Открыть фото">
         <span>2018</span>
         <h3>На холме</h3>
         <p>Она ведёт детей к закату — и кажется, что время останавливается.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-05.jpg')" data-year="2026" data-title="Стол с памятью" data-caption="Мама разбирает старые снимки, из которых потом собирается книга." data-image="assets/gallery/mom-05.jpg" aria-label="2026. Стол с памятью. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-05.jpg'); --stagger: 1" data-year="2026" data-title="Стол с памятью" data-caption="Мама разбирает старые снимки, из которых потом собирается книга." data-image="assets/gallery/mom-05.jpg" aria-label="2026. Стол с памятью. Открыть фото">
         <span>2026</span>
         <h3>Стол с памятью</h3>
         <p>Мама разбирает старые снимки, из которых потом собирается книга.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-06.jpg')" data-year="2026" data-title="Смотрим вместе" data-caption="Дети сидят рядом с мамой и листают её историю на экране." data-image="assets/gallery/mom-06.jpg" aria-label="2026. Смотрим вместе. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-06.jpg'); --stagger: 2" data-year="2026" data-title="Смотрим вместе" data-caption="Дети сидят рядом с мамой и листают её историю на экране." data-image="assets/gallery/mom-06.jpg" aria-label="2026. Смотрим вместе. Открыть фото">
         <span>2026</span>
         <h3>Смотрим вместе</h3>
         <p>Дети сидят рядом с мамой и листают её историю на экране.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-07.jpg')" data-year="2026" data-title="Эта книга" data-caption="Портрет, с которого начинается персональная книга о ней." data-image="assets/gallery/mom-07.jpg" aria-label="2026. Эта книга. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-07.jpg'); --stagger: 3" data-year="2026" data-title="Эта книга" data-caption="Портрет, с которого начинается персональная книга о ней." data-image="assets/gallery/mom-07.jpg" aria-label="2026. Эта книга. Открыть фото">
         <span>2026</span>
         <h3>Эта книга</h3>
         <p>Портрет, с которого начинается персональная книга о ней.</p>
       </button>
-      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-08.jpg')" data-year="2026" data-title="Тихий вечер" data-caption="Когда дом затихает, и мама остаётся наедине с собой." data-image="assets/gallery/mom-08.jpg" aria-label="2026. Тихий вечер. Открыть фото">
+      <button type="button" class="photo-card reveal" style="--photo-image: url('assets/gallery/mom-08.jpg'); --stagger: 4" data-year="2026" data-title="Тихий вечер" data-caption="Когда дом затихает, и мама остаётся наедине с собой." data-image="assets/gallery/mom-08.jpg" aria-label="2026. Тихий вечер. Открыть фото">
         <span>2026</span>
         <h3>Тихий вечер</h3>
         <p>Когда дом затихает, и мама остаётся наедине с собой.</p>
@@ -242,6 +245,9 @@
           document.querySelector("#chapter-title").textContent = chapter.title;
           document.querySelector("#chapter-text").textContent = chapter.text;
           document.querySelector("#chapter-memory").textContent = chapter.memory;
+          const copy = document.querySelector("#chapter-copy");
+          const nextCopy = copy.cloneNode(true);
+          copy.replaceWith(nextCopy);
           progress.style.width = Math.round(((index + 1) / chapters.length) * 100) + "%";
           document.querySelector(".chapter-progress").setAttribute("aria-label", "Прогресс книги " + Math.round(((index + 1) / chapters.length) * 100) + "%");
           chapterCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -255,10 +261,35 @@
       document.querySelectorAll("[data-voice]").forEach((button) => {
         button.addEventListener("click", () => {
           const wasActive = button.classList.contains("active");
-          document.querySelectorAll("[data-voice]").forEach((item) => item.classList.remove("active"));
-          if (!wasActive) button.classList.add("active");
+          document.querySelectorAll("[data-voice]").forEach((item) => {
+            item.classList.remove("active");
+            item.closest(".voice-card")?.classList.remove("is-playing");
+          });
+          if (!wasActive) {
+            button.classList.add("active");
+            button.closest(".voice-card")?.classList.add("is-playing");
+          }
         });
       });
+
+      const revealNodes = Array.from(document.querySelectorAll(".reveal"));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reveal = (node) => node.classList.add("is-visible");
+      if (reduceMotion) {
+        revealNodes.forEach(reveal);
+      } else {
+        const observer = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+          }
+        }, { threshold: 0.08, rootMargin: "0px 0px 12% 0px" });
+        revealNodes.forEach((node) => {
+          if (node.getBoundingClientRect().top < window.innerHeight * 0.94) reveal(node);
+          else observer.observe(node);
+        });
+      }
 
       const overlay = document.querySelector(".nav-overlay");
       const toggle = document.querySelector(".menu-toggle");
