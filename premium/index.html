@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#F8F3EA" />
+    <title>Мамина история — премиальная демо-книга | Я здесь</title>
+    <meta
+      name="description"
+      content="Премиальная интерактивная книга о маме: семь глав жизни, семейный архив, голоса близких, письма и финальное посвящение. Демонстрация проекта «Я здесь»."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мамина история — премиальная демо-книга" />
+    <meta
+      property="og:description"
+      content="Семь глав одной жизни, фотоархив, голоса близких и письма. Премиальная демо-книга проекта «Я здесь»."
+    />
+    <meta property="og:url" content="https://keepitokus.github.io/mombook/premium/" />
+    <meta
+      property="og:image"
+      content="https://keepitokus.github.io/mombook/assets/mamina-istoriya-hero.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Мамина история — премиальная демо-книга" />
+    <meta
+      name="twitter:description"
+      content="Премиальная интерактивная биографическая книга о маме от проекта «Я здесь»."
+    />
+    <meta
+      name="twitter:image"
+      content="https://keepitokus.github.io/mombook/assets/mamina-istoriya-hero.png"
+    />
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="progress-bar" aria-hidden="true"><span data-read-progress></span></div>
+    <button class="nav-overlay" type="button" data-nav-overlay hidden aria-label="Закрыть меню"></button>
+
+    <header class="topbar">
+      <a class="brand" href="#cover">Я здесь<span>.</span></a>
+      <button
+        class="menu-toggle"
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="site-menu"
+      >
+        <span class="sr-only">Открыть меню</span>
+        <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      <nav class="nav-links" id="site-menu" data-nav-links aria-label="Разделы книги">
+        <a href="#dedication">Посвящение</a>
+        <a href="#chapters">История</a>
+        <a href="#photos">Фото</a>
+        <a href="#videos">Видео</a>
+        <a href="#voices">Голоса</a>
+        <a href="#letters">Письма</a>
+        <a href="#order">Заказать</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="cover">
+        <div class="hero-media" data-hero-media aria-hidden="true"></div>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <span class="demo-note" data-bind="cover.demoNote"></span>
+          <h1 data-bind="cover.recipientName"></h1>
+          <p class="tagline" data-bind="cover.tagline"></p>
+          <p class="subtitle" data-bind="cover.subtitle"></p>
+          <div class="hero-actions">
+            <a class="button" href="#dedication" data-bind="cover.ctaLabel"></a>
+          </div>
+        </div>
+        <div class="scroll-hint" aria-hidden="true">
+          <span>Листать</span>
+          <i></i>
+        </div>
+      </section>
+
+      <section class="section dedication" id="dedication">
+        <div class="wrap reveal">
+          <div class="ornament" aria-hidden="true">✧</div>
+          <p class="eyebrow">Посвящение</p>
+          <h2 class="dedication-quote" data-bind="dedication.quote"></h2>
+          <p class="lead" data-bind="dedication.body"></p>
+          <p class="signature handwrite" data-bind="dedication.signature"></p>
+        </div>
+      </section>
+
+      <section class="section chapters" id="chapters">
+        <div class="wrap">
+          <p class="eyebrow reveal">Семь глав одной истории</p>
+          <h2 class="section-title reveal">Хронология жизни</h2>
+          <p class="lead reveal">
+            От бабушкиного дома у реки до сегодняшнего дня — главы, которые можно листать как
+            страницы дорогой книги.
+          </p>
+
+          <div class="chapter-layout">
+            <div class="chapter-nav" data-chapter-nav role="tablist" aria-label="Главы книги"></div>
+            <article class="chapter-scene" aria-live="polite">
+              <div class="chapter-visual" data-chapter-visual>
+                <span class="years" data-chapter-years></span>
+              </div>
+              <div class="chapter-progress" aria-hidden="true"><span data-chapter-progress></span></div>
+              <div class="chapter-body" data-chapter-body>
+                <p class="place" data-chapter-place></p>
+                <h3 data-chapter-title></h3>
+                <p class="story" data-chapter-story></p>
+                <p class="chapter-memory" data-chapter-memory></p>
+                <div class="chapter-controls">
+                  <button class="text-btn" type="button" data-chapter-prev>← Назад</button>
+                  <span class="count" data-chapter-count></span>
+                  <button class="text-btn" type="button" data-chapter-next>Следующая глава →</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section gallery" id="photos">
+        <div class="wrap">
+          <p class="eyebrow reveal">Семейный фотоархив</p>
+          <h2 class="section-title reveal">Моменты, к которым хочется возвращаться</h2>
+          <p class="lead reveal">
+            Двенадцать кадров из демонстрационного архива семьи Соколовых — с подписями, годами и
+            полноэкранным просмотром.
+          </p>
+          <div class="album-tabs" data-album-tabs role="tablist" aria-label="Альбомы"></div>
+          <div class="gallery-grid" data-gallery-grid></div>
+        </div>
+      </section>
+
+      <section class="section videos" id="videos">
+        <div class="wrap">
+          <p class="eyebrow reveal">Видеоархив</p>
+          <h2 class="section-title reveal">Моменты, которые можно прожить снова</h2>
+          <p class="lead reveal">
+            В персональной книге здесь появятся ваши семейные ролики. В этой демонстрации показан
+            пример размещения без ложного воспроизведения.
+          </p>
+          <div class="video-grid" data-video-grid></div>
+        </div>
+      </section>
+
+      <section class="section voices" id="voices">
+        <div class="wrap">
+          <p class="eyebrow reveal">Голоса близких</p>
+          <h2 class="section-title reveal">Голоса, которые хочется слышать</h2>
+          <p class="lead reveal">
+            Короткие воспоминания от дочери, сына и мужа. Демо-дорожки запускаются только по
+            нажатию; одновременно играет одна запись.
+          </p>
+          <div class="voice-grid" data-voice-grid></div>
+        </div>
+      </section>
+
+      <section class="section letters" id="letters">
+        <div class="wrap">
+          <p class="eyebrow reveal">Письма маме</p>
+          <h2 class="section-title reveal">Есть слова, которые хочется сохранить</h2>
+          <p class="lead reveal">
+            Три письма близких — на бумаге, которую можно открыть целиком и закрыть с клавиатуры.
+          </p>
+          <div class="letter-grid" data-letter-grid></div>
+        </div>
+      </section>
+
+      <section class="section closing" id="closing">
+        <div class="wrap reveal">
+          <h2 data-bind="closing.title"></h2>
+          <div data-closing-body></div>
+          <p class="signature" data-bind="closing.signature"></p>
+        </div>
+      </section>
+
+      <section class="section commercial" id="order">
+        <div class="wrap reveal">
+          <p class="eyebrow">Проект «Я здесь»</p>
+          <h2 class="section-title" data-bind="commercial.title"></h2>
+          <p class="lead" data-bind="commercial.subtitle"></p>
+          <p class="price" data-bind="commercial.price"></p>
+          <a class="button" data-order-cta href="https://t.me/keepitok" rel="noopener noreferrer" target="_blank"
+            >Заказать «Мамину историю»</a
+          >
+          <p class="occasion" data-bind="commercial.occasionNote"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Демонстрационная книга проекта
+        <a href="../">«Я здесь»</a>. Персонажи и история вымышлены. Базовая версия —
+        <a href="../">«Мама, спасибо»</a>.
+      </p>
+    </footer>
+
+    <div class="modal" data-lightbox hidden role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+      <button class="modal-close" type="button" data-lightbox-close aria-label="Закрыть">×</button>
+      <figure class="lightbox-figure">
+        <img data-lightbox-image alt="" />
+        <figcaption data-lightbox-caption></figcaption>
+        <div class="lightbox-nav">
+          <button type="button" data-lightbox-prev aria-label="Предыдущее фото">←</button>
+          <button type="button" data-lightbox-next aria-label="Следующее фото">→</button>
+        </div>
+      </figure>
+    </div>
+
+    <div class="modal" data-letter-modal hidden role="dialog" aria-modal="true" aria-label="Письмо">
+      <button class="modal-close" type="button" data-letter-close aria-label="Закрыть письмо">×</button>
+      <div data-letter-mount></div>
+    </div>
+
+    <div class="modal" data-video-modal hidden role="dialog" aria-modal="true" aria-label="Видео">
+      <button class="modal-close" type="button" data-video-close aria-label="Закрыть видео">×</button>
+      <div data-video-mount></div>
+    </div>
+
+    <script type="module" src="./js/book.js"></script>
+  </body>
+</html>
