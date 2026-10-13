@@ -719,6 +719,10 @@ h1 {
   text-align: center;
 }
 
+.order .demo-pill {
+  margin-bottom: 28px;
+}
+
 .order p {
   color: rgba(255, 255, 255, 0.9);
   font-size: 18px;
@@ -940,6 +944,10 @@ h1 {
   .letter h2,
   .order h2 {
     font-size: 42px;
+  }
+
+  .order .demo-pill {
+    margin-bottom: 22px;
   }
 
   .section-heading {
