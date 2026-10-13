@@ -415,5 +415,8 @@ for (const file of await readdir(resolve(root, "public/gallery"))) {
 await writeFile(resolve(outDir, "styles.css"), css);
 await writeFile(resolve(outDir, "index.html"), html);
 await writeFile(resolve(outDir, ".nojekyll"), "");
+await mkdir(resolve(outDir, "premium"), { recursive: true });
+await copyFile(resolve(root, "premium/index.html"), resolve(outDir, "premium/index.html"));
+
 
 console.log(`GitHub Pages static build written to ${outDir}`);
