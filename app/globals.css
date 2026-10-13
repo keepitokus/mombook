@@ -1,0 +1,846 @@
+@import "tailwindcss";
+
+:root {
+  --ivory: #fbf7ee;
+  --paper: #fffdf8;
+  --ink: #242321;
+  --muted: #6f6a61;
+  --sage: #6f7f69;
+  --cranberry: #8f2f46;
+  --rose: #c77b73;
+  --gold: #c49a52;
+  --graphite: #303238;
+  --line: rgba(36, 35, 33, 0.14);
+  --shadow: 0 26px 70px rgba(38, 31, 25, 0.18);
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--font-sans), Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.site-shell {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(199, 123, 115, 0.18), transparent 28rem),
+    linear-gradient(180deg, #fffaf0 0%, #f5efe3 47%, #fbf7ee 100%);
+}
+
+.topbar {
+  align-items: center;
+  backdrop-filter: blur(18px);
+  background: rgba(251, 247, 238, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  box-shadow: 0 18px 40px rgba(34, 32, 28, 0.1);
+  display: flex;
+  justify-content: space-between;
+  left: 50%;
+  max-width: min(1120px, calc(100vw - 28px));
+  padding: 10px 12px;
+  position: fixed;
+  top: 14px;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 10;
+}
+
+.brand,
+.nav-links,
+.hero-actions,
+.order-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.brand {
+  font-weight: 800;
+}
+
+.brand-mark {
+  align-items: center;
+  background: var(--cranberry);
+  border-radius: 50%;
+  color: white;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.nav-links a {
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.nav-links a:hover {
+  background: rgba(111, 127, 105, 0.13);
+  color: var(--ink);
+}
+
+.hero {
+  min-height: 96vh;
+  padding: 118px clamp(20px, 5vw, 72px) 72px;
+  position: relative;
+}
+
+.hero-image {
+  background-image: url("/mamina-istoriya-hero.png");
+  background-position: center;
+  background-size: cover;
+  inset: 0;
+  position: absolute;
+  transform: scale(1.01);
+}
+
+.hero-scrim {
+  background:
+    linear-gradient(90deg, rgba(24, 22, 20, 0.72) 0%, rgba(24, 22, 20, 0.42) 42%, rgba(24, 22, 20, 0.08) 100%),
+    linear-gradient(180deg, rgba(24, 22, 20, 0.2), rgba(24, 22, 20, 0.58));
+  inset: 0;
+  position: absolute;
+}
+
+.hero-content {
+  color: white;
+  max-width: 700px;
+  padding-top: 4vh;
+  position: relative;
+  z-index: 1;
+}
+
+.demo-pill,
+.eyebrow,
+.section-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.demo-pill {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  display: inline-flex;
+  padding: 9px 13px;
+}
+
+.eyebrow {
+  color: #f7dca8;
+  margin-top: 34px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(64px, 9vw, 126px);
+  font-weight: 700;
+  line-height: 0.86;
+  margin: 18px 0 24px;
+  max-width: 720px;
+}
+
+.hero-lead {
+  font-size: clamp(18px, 1.8vw, 23px);
+  line-height: 1.55;
+  margin: 0 0 34px;
+  max-width: 650px;
+}
+
+.button {
+  border-radius: 999px;
+  display: inline-flex;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 48px;
+  padding: 15px 22px;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button.primary {
+  background: var(--cranberry);
+  box-shadow: 0 18px 40px rgba(143, 47, 70, 0.28);
+  color: white;
+}
+
+.button.secondary {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  color: white;
+}
+
+.cover-card {
+  backdrop-filter: blur(18px);
+  background: rgba(255, 253, 248, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  bottom: 54px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 6px;
+  padding: 22px;
+  position: absolute;
+  right: clamp(20px, 5vw, 72px);
+  width: min(310px, calc(100vw - 40px));
+  z-index: 1;
+}
+
+.cover-card span,
+.cover-card small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.cover-card strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 46px;
+  line-height: 0.95;
+}
+
+.section-band {
+  padding: clamp(72px, 9vw, 126px) clamp(20px, 5vw, 72px);
+}
+
+.intro {
+  display: grid;
+  gap: 48px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+}
+
+.section-kicker {
+  color: var(--cranberry);
+  margin: 0 0 14px;
+}
+
+.intro h2,
+.section-heading h2,
+.letter h2,
+.order h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(42px, 6vw, 86px);
+  line-height: 0.96;
+}
+
+.intro-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.intro-grid article {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(38, 31, 25, 0.08);
+  padding: 24px;
+}
+
+.intro-grid span {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.intro-grid h3 {
+  font-size: 20px;
+  margin: 18px 0 10px;
+}
+
+.intro-grid p,
+.section-heading p,
+.video-demo p,
+.order p,
+.letter p {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.chapters {
+  background: #f0eadf;
+}
+
+.section-heading {
+  margin: 0 auto 42px;
+  max-width: 860px;
+  text-align: center;
+}
+
+.chapter-stage {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 380px minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: 1120px;
+}
+
+.chapter-list {
+  display: grid;
+  gap: 12px;
+}
+
+.chapter-tab {
+  background: rgba(255, 253, 248, 0.62);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  min-height: 84px;
+  padding: 18px;
+  text-align: left;
+}
+
+.chapter-tab span {
+  color: var(--cranberry);
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.chapter-tab.active {
+  background: var(--graphite);
+  border-color: transparent;
+  box-shadow: var(--shadow);
+  color: white;
+}
+
+.chapter-card {
+  background:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(255, 253, 248, 0.82)),
+    url("/mamina-istoriya-hero.png");
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  min-height: 430px;
+  padding: clamp(28px, 5vw, 56px);
+}
+
+.chapter-progress {
+  background: rgba(36, 35, 33, 0.1);
+  border-radius: 999px;
+  height: 8px;
+  margin-bottom: 34px;
+  overflow: hidden;
+}
+
+.chapter-progress span {
+  background: linear-gradient(90deg, var(--cranberry), var(--gold));
+  display: block;
+  height: 100%;
+  transition: width 260ms ease;
+}
+
+.chapter-card h3 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(36px, 5vw, 70px);
+  line-height: 0.98;
+  max-width: 760px;
+}
+
+.chapter-card p {
+  color: #4f4a43;
+  font-size: 18px;
+  line-height: 1.85;
+  max-width: 780px;
+}
+
+.memory-note {
+  background: rgba(143, 47, 70, 0.09);
+  border-left: 4px solid var(--cranberry);
+  color: var(--cranberry);
+  font-weight: 800;
+  margin-top: 26px;
+  padding: 16px 18px;
+}
+
+.photo-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.photo-card {
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(38, 31, 25, 0.13);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  grid-column: span 2;
+  justify-content: end;
+  min-height: 320px;
+  overflow: hidden;
+  padding: 22px;
+  position: relative;
+}
+
+.photo-card:nth-child(2),
+.photo-card:nth-child(5) {
+  grid-column: span 2;
+  transform: translateY(30px);
+}
+
+.photo-card::before {
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.62) 100%),
+    url("/mamina-istoriya-hero.png");
+  background-size: cover;
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.photo-shine {
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  inset: 0;
+  position: absolute;
+  transform: translateX(-80%);
+}
+
+.photo-card:hover .photo-shine {
+  animation: shine 950ms ease;
+}
+
+.tone-1::before { background-position: 8% 48%; filter: sepia(0.24); }
+.tone-2::before { background-position: 40% 34%; filter: saturate(0.9); }
+.tone-3::before { background-position: 62% 45%; filter: contrast(1.06); }
+.tone-4::before { background-position: 82% 50%; filter: saturate(1.08); }
+.tone-5::before { background-position: 28% 60%; filter: sepia(0.15); }
+.tone-6::before { background-position: 52% 40%; filter: contrast(1.08); }
+
+.photo-card span,
+.photo-card h3,
+.photo-card p {
+  position: relative;
+}
+
+.photo-card span {
+  color: #f7dca8;
+  font-weight: 900;
+}
+
+.photo-card h3 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 32px;
+  line-height: 1;
+  margin: 8px 0;
+}
+
+.photo-card p {
+  line-height: 1.5;
+  margin: 0;
+}
+
+.media {
+  background: var(--graphite);
+  color: white;
+}
+
+.media .section-kicker,
+.media .section-heading p {
+  color: #f7dca8;
+}
+
+.media-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
+  margin: 0 auto;
+  max-width: 1120px;
+}
+
+.video-demo,
+.voice-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.video-frame {
+  align-items: end;
+  aspect-ratio: 16 / 10;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.56)),
+    url("/mamina-istoriya-hero.png");
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 22px;
+}
+
+.video-frame.playing {
+  animation: warmPulse 1600ms ease-in-out infinite alternate;
+}
+
+.video-frame button,
+.play {
+  align-items: center;
+  background: white;
+  border: 0;
+  border-radius: 999px;
+  color: var(--cranberry);
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 900;
+  justify-content: center;
+}
+
+.video-frame button {
+  min-height: 50px;
+  padding: 0 20px;
+}
+
+.video-frame div {
+  display: grid;
+  gap: 6px;
+  max-width: 310px;
+  text-align: right;
+}
+
+.video-frame span,
+.voice-card span {
+  color: #f7dca8;
+  font-weight: 800;
+}
+
+.voice-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.voice-card {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 48px 1fr;
+}
+
+.play {
+  height: 48px;
+  width: 48px;
+}
+
+.play.active {
+  background: var(--gold);
+  color: var(--graphite);
+}
+
+.voice-card h3 {
+  font-size: 20px;
+}
+
+.voice-card p {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.55;
+}
+
+.wave {
+  align-items: end;
+  display: flex;
+  gap: 5px;
+  height: 24px;
+}
+
+.wave i {
+  background: rgba(247, 220, 168, 0.78);
+  border-radius: 999px;
+  display: block;
+  height: 35%;
+  width: 5px;
+}
+
+.voice-card:nth-child(1) .wave i:nth-child(2n),
+.voice-card:nth-child(2) .wave i:nth-child(2n + 1),
+.voice-card:nth-child(3) .wave i:nth-child(3n) {
+  height: 90%;
+}
+
+.letter {
+  background:
+    linear-gradient(90deg, rgba(111, 127, 105, 0.14), transparent),
+    #f8f1e5;
+}
+
+.letter-paper {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  margin: 0 auto;
+  max-width: 900px;
+  padding: clamp(30px, 7vw, 74px);
+}
+
+.letter p {
+  font-size: 18px;
+}
+
+.letter span {
+  color: var(--cranberry);
+  display: block;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 34px;
+  margin-top: 24px;
+}
+
+.order {
+  background:
+    linear-gradient(120deg, rgba(36, 35, 33, 0.72), rgba(36, 35, 33, 0.46)),
+    url("/mamina-istoriya-hero.png");
+  background-position: center;
+  background-size: cover;
+  color: white;
+  padding: clamp(72px, 11vw, 150px) 20px;
+}
+
+.order-inner {
+  margin: 0 auto;
+  max-width: 820px;
+  text-align: center;
+}
+
+.order p {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 18px;
+}
+
+.order-actions {
+  justify-content: center;
+  margin: 32px 0 24px;
+}
+
+.order small {
+  color: rgba(255, 255, 255, 0.72);
+  display: block;
+  line-height: 1.6;
+}
+
+.reveal {
+  animation: rise 700ms ease both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shine {
+  to {
+    transform: translateX(80%);
+  }
+}
+
+@keyframes warmPulse {
+  from {
+    filter: saturate(1);
+  }
+  to {
+    filter: saturate(1.18) brightness(1.05);
+  }
+}
+
+@media (max-width: 920px) {
+  .topbar {
+    border-radius: 22px;
+    gap: 10px;
+  }
+
+  .nav-links {
+    gap: 2px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    padding: 8px 7px;
+  }
+
+  .hero {
+    min-height: 100svh;
+    padding-top: 104px;
+  }
+
+  .hero-scrim {
+    background:
+      linear-gradient(180deg, rgba(24, 22, 20, 0.44), rgba(24, 22, 20, 0.78)),
+      linear-gradient(90deg, rgba(24, 22, 20, 0.42), rgba(24, 22, 20, 0.12));
+  }
+
+  .hero-content {
+    padding-top: 12vh;
+  }
+
+  .cover-card {
+    display: none;
+  }
+
+  .intro,
+  .chapter-stage,
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-list {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .chapter-tab {
+    min-width: 260px;
+    scroll-snap-align: start;
+  }
+
+  .photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photo-card,
+  .photo-card:nth-child(2),
+  .photo-card:nth-child(5) {
+    grid-column: span 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    max-width: calc(100vw - 20px);
+    padding: 10px;
+    top: 10px;
+  }
+
+  .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+  }
+
+  .nav-links a {
+    text-align: center;
+  }
+
+  .hero {
+    padding: 142px 18px 42px;
+  }
+
+  .hero-image {
+    background-position: 58% center;
+  }
+
+  h1 {
+    font-size: clamp(58px, 18vw, 82px);
+  }
+
+  .hero-lead {
+    font-size: 17px;
+  }
+
+  .hero-actions,
+  .order-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .section-band {
+    padding: 64px 18px;
+  }
+
+  .intro h2,
+  .section-heading h2,
+  .letter h2,
+  .order h2 {
+    font-size: 42px;
+  }
+
+  .section-heading {
+    text-align: left;
+  }
+
+  .chapter-card {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .chapter-card h3 {
+    font-size: 38px;
+  }
+
+  .chapter-card p {
+    font-size: 16px;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-card {
+    min-height: 280px;
+  }
+
+  .video-frame {
+    align-items: start;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .video-frame div {
+    text-align: left;
+  }
+}
