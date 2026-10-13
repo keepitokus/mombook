@@ -187,8 +187,8 @@ export default function Home() {
         <div className="hero-scrim" />
         <div className="hero-content reveal">
           <p className="demo-pill">Демонстрационная история, семья вымышлена</p>
-          <p className="eyebrow">Премиальная интерактивная книга ко Дню матери</p>
-          <h1>Мамина история</h1>
+          <p className="eyebrow">Интерактивная книга ко Дню матери</p>
+          <h1>Мама, спасибо.</h1>
           <p className="hero-lead">
             Персональная цифровая книга о Елене Соколовой: о девочке с мечтами,
             женщине с характером и маме, чья жизнь стала семейным светом.

@@ -169,9 +169,9 @@ const html = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Мамина история - демо-книга | Я здесь</title>
-    <meta name="description" content="Премиальная интерактивная демо-книга ко Дню матери для проекта «Я здесь»: главы жизни, фото, голоса, видео и письмо.">
-    <meta property="og:title" content="Мамина история - демо-книга">
+    <title>Мама, спасибо - демо-книга | Я здесь</title>
+    <meta name="description" content="Интерактивная демо-книга ко Дню матери для проекта «Я здесь»: главы жизни, фото, голоса, видео и письмо.">
+    <meta property="og:title" content="Мама, спасибо - демо-книга">
     <meta property="og:description" content="Интерактивный пример персональной цифровой книги о маме.">
     <meta property="og:image" content="assets/mamina-istoriya-hero.png">
     <link rel="icon" href="assets/favicon.svg">
@@ -201,8 +201,8 @@ const html = `<!doctype html>
         <div class="hero-scrim"></div>
         <div class="hero-content reveal">
           <p class="demo-pill">Демонстрационная история, семья вымышлена</p>
-          <p class="eyebrow">Премиальная интерактивная книга ко Дню матери</p>
-          <h1>Мамина история</h1>
+          <p class="eyebrow">Интерактивная книга ко Дню матери</p>
+          <h1>Мама, спасибо.</h1>
           <p class="hero-lead">Персональная цифровая книга о Елене Соколовой: о девочке с мечтами, женщине с характером и маме, чья жизнь стала семейным светом.</p>
           <div class="hero-actions">
             <a class="button primary" href="#chapters">Открыть демо-книгу</a>
