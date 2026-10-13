@@ -13,12 +13,16 @@
   </head>
   <body>
     <main class="site-shell">
+      <button class="nav-overlay" type="button" aria-label="Закрыть меню" hidden></button>
       <nav class="topbar" aria-label="Навигация по демо-книге">
         <a class="brand" href="#cover" aria-label="Я здесь, к началу книги">
-          <span class="brand-mark">Я</span>
-          <span>Я здесь</span>
+          <img class="brand-logo" src="assets/ya-zdes-logo.jpg" alt="" width="112" height="112">
         </a>
-        <div class="nav-links">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+          <span class="sr-only">Открыть меню</span>
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-links" id="site-menu">
           <a href="#chapters">Главы</a>
           <a href="#gallery">Фото</a>
           <a href="#voices">Голоса</a>
@@ -66,23 +70,23 @@
         </div>
         <div class="chapter-stage">
           <div class="chapter-list" role="tablist" aria-label="Выбор главы">
-      <button class="chapter-tab active" data-chapter="0" role="tab" aria-selected="true">
-        <span>1974-1989</span>
-        Девочка, которая собирала лето
+      <button class="chapter-tab active" data-chapter="0" role="tab" aria-label="1974-1989. Девочка, которая собирала лето" aria-selected="true">
+        <span class="chapter-tab-years">1974-1989</span>
+        <span class="chapter-tab-title">Девочка, которая собирала лето</span>
       </button>
-      <button class="chapter-tab" data-chapter="1" role="tab" aria-selected="false">
-        <span>1990-1998</span>
-        Восемнадцать: песни, письма, первые решения
+      <button class="chapter-tab" data-chapter="1" role="tab" aria-label="1990-1998. Восемнадцать: песни, письма, первые решения" aria-selected="false">
+        <span class="chapter-tab-years">1990-1998</span>
+        <span class="chapter-tab-title">Восемнадцать: песни, письма, первые решения</span>
       </button>
-      <button class="chapter-tab" data-chapter="2" role="tab" aria-selected="false">
-        <span>1999-2007</span>
-        Любовь, которую видно в деталях
+      <button class="chapter-tab" data-chapter="2" role="tab" aria-label="1999-2007. Любовь, которую видно в деталях" aria-selected="false">
+        <span class="chapter-tab-years">1999-2007</span>
+        <span class="chapter-tab-title">Любовь, которую видно в деталях</span>
       </button>
-      <button class="chapter-tab" data-chapter="3" role="tab" aria-selected="false">
-        <span>2008-2026</span>
-        Мама, которая делала дом живым
+      <button class="chapter-tab" data-chapter="3" role="tab" aria-label="2008-2026. Мама, которая делала дом живым" aria-selected="false">
+        <span class="chapter-tab-years">2008-2026</span>
+        <span class="chapter-tab-title">Мама, которая делала дом живым</span>
       </button></div>
-          <article class="chapter-card" role="tabpanel">
+          <article class="chapter-card" role="tabpanel" id="chapter-card">
             <div class="chapter-progress" aria-label="Прогресс книги 25%"><span style="width: 25%"></span></div>
             <p class="section-kicker" id="chapter-place">Таруса, дом у реки</p>
             <h3 id="chapter-title">Девочка, которая собирала лето</h3>
@@ -98,42 +102,46 @@
           <h2>Архив выглядит бережно, но современно.</h2>
         </div>
         <div class="photo-grid">
-      <article class="photo-card tone-1">
-        <div class="photo-shine"></div>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-01.jpg')" data-year="1983" data-title="У реки" data-caption="Лена на велосипеде: первое лето, которое она называла своим." data-image="assets/gallery/mom-01.jpg" aria-label="1983. У реки. Открыть фото">
         <span>1983</span>
-        <h3>Велосипед у реки</h3>
-        <p>Первое лето, которое Лена называла своим.</p>
-      </article>
-      <article class="photo-card tone-2">
-        <div class="photo-shine"></div>
-        <span>1992</span>
-        <h3>Филфак и красная помада</h3>
-        <p>Фотография из автомата рядом с метро.</p>
-      </article>
-      <article class="photo-card tone-3">
-        <div class="photo-shine"></div>
-        <span>1999</span>
-        <h3>Книжный лоток</h3>
-        <p>День, когда началась история с Андреем.</p>
-      </article>
-      <article class="photo-card tone-4">
-        <div class="photo-shine"></div>
+        <h3>У реки</h3>
+        <p>Лена на велосипеде: первое лето, которое она называла своим.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-02.jpg')" data-year="2008" data-title="Вверх" data-caption="Мама поднимает ребёнка так, будто весь дом становится легче." data-image="assets/gallery/mom-02.jpg" aria-label="2008. Вверх. Открыть фото">
         <span>2008</span>
-        <h3>Первое какао для Ники</h3>
-        <p>Субботняя традиция стала семейным ритуалом.</p>
-      </article>
-      <article class="photo-card tone-5">
-        <div class="photo-shine"></div>
-        <span>2016</span>
-        <h3>Поездка к морю</h3>
-        <p>Мама смеётся так, что все кадры получаются живыми.</p>
-      </article>
-      <article class="photo-card tone-6">
-        <div class="photo-shine"></div>
+        <h3>Вверх</h3>
+        <p>Мама поднимает ребёнка так, будто весь дом становится легче.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-03.jpg')" data-year="2012" data-title="Семейный портрет" data-caption="Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему." data-image="assets/gallery/mom-03.jpg" aria-label="2012. Семейный портрет. Открыть фото">
+        <span>2012</span>
+        <h3>Семейный портрет</h3>
+        <p>Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-04.jpg')" data-year="2018" data-title="На холме" data-caption="Она ведёт детей к закату — и кажется, что время останавливается." data-image="assets/gallery/mom-04.jpg" aria-label="2018. На холме. Открыть фото">
+        <span>2018</span>
+        <h3>На холме</h3>
+        <p>Она ведёт детей к закату — и кажется, что время останавливается.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-05.jpg')" data-year="2026" data-title="Стол с памятью" data-caption="Мама разбирает старые снимки, из которых потом собирается книга." data-image="assets/gallery/mom-05.jpg" aria-label="2026. Стол с памятью. Открыть фото">
+        <span>2026</span>
+        <h3>Стол с памятью</h3>
+        <p>Мама разбирает старые снимки, из которых потом собирается книга.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-06.jpg')" data-year="2026" data-title="Смотрим вместе" data-caption="Дети сидят рядом с мамой и листают её историю на экране." data-image="assets/gallery/mom-06.jpg" aria-label="2026. Смотрим вместе. Открыть фото">
+        <span>2026</span>
+        <h3>Смотрим вместе</h3>
+        <p>Дети сидят рядом с мамой и листают её историю на экране.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-07.jpg')" data-year="2026" data-title="Эта книга" data-caption="Портрет, с которого начинается персональная книга о ней." data-image="assets/gallery/mom-07.jpg" aria-label="2026. Эта книга. Открыть фото">
         <span>2026</span>
         <h3>Эта книга</h3>
-        <p>Дети собирают историю, которую хочется сохранить.</p>
-      </article></div>
+        <p>Портрет, с которого начинается персональная книга о ней.</p>
+      </button>
+      <button type="button" class="photo-card" style="--photo-image: url('assets/gallery/mom-08.jpg')" data-year="2026" data-title="Тихий вечер" data-caption="Когда дом затихает, и мама остаётся наедине с собой." data-image="assets/gallery/mom-08.jpg" aria-label="2026. Тихий вечер. Открыть фото">
+        <span>2026</span>
+        <h3>Тихий вечер</h3>
+        <p>Когда дом затихает, и мама остаётся наедине с собой.</p>
+      </button></div>
       </section>
 
       <section class="media section-band" id="voices">
@@ -205,10 +213,23 @@
         </div>
       </section>
     </main>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+      <button class="lightbox-backdrop" type="button" aria-label="Закрыть фото"></button>
+      <button class="lightbox-close" type="button" aria-label="Закрыть фото"><span aria-hidden="true">×</span></button>
+      <figure class="lightbox-figure">
+        <img id="lightbox-image" alt="">
+        <figcaption>
+          <span id="lightbox-year"></span>
+          <strong id="lightbox-title"></strong>
+          <p id="lightbox-caption"></p>
+        </figcaption>
+      </figure>
+    </div>
     <script>
       const chapters = [{"years":"1974-1989","title":"Девочка, которая собирала лето","place":"Таруса, дом у реки","text":"Лена Соколова росла в доме, где по воскресеньям пахло пирогами, а на подоконнике сушились полевые цветы. Она записывала в тетрадь слова из песен, училась фотографировать на старый Зенит и мечтала однажды увидеть море не на открытке.","memory":"Первая сохранившаяся фотография: Лена на велосипеде, июль 1983."},{"years":"1990-1998","title":"Восемнадцать: песни, письма, первые решения","place":"Москва, общежитие на Соколе","text":"В восемнадцать она слушала Наутилус и Sade, носила бордовую рубашку и говорила, что счастье начинается с честного разговора. В этот период Лена поступила на филфак, впервые жила одна и писала домой письма на тонкой бумаге.","memory":"Вопрос для мамы: какую мечту ты тогда никому не рассказывала?"},{"years":"1999-2007","title":"Любовь, которую видно в деталях","place":"Парк Горького, кухня на Новослободской","text":"С будущим мужем, Андреем, Лена познакомилась у книжного лотка. Он купил ей сборник Ахматовой, а она через неделю вернула книгу с закладкой из трамвайного билета. Потом были маленькая свадьба, переезды, первый семейный фотоальбом и традиция варить какао по субботам.","memory":"Аудио-демо: Андрей вспоминает их первое свидание."},{"years":"2008-2026","title":"Мама, которая делала дом живым","place":"Семья Соколовых","text":"Когда родились Ника и Миша, Лена стала тем человеком, который помнит все школьные спектакли, первые победы и смешные детские фразы. Но эта книга возвращает фокус к ней самой: к её смелости, юмору, красоте и тихим победам.","memory":"Финальная глава собирает голоса детей, семейные видео и письмо благодарности."}];
       const tabs = document.querySelectorAll("[data-chapter]");
       const progress = document.querySelector(".chapter-progress span");
+      const chapterCard = document.querySelector("#chapter-card");
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
           const index = Number(tab.dataset.chapter);
@@ -223,6 +244,7 @@
           document.querySelector("#chapter-memory").textContent = chapter.memory;
           progress.style.width = Math.round(((index + 1) / chapters.length) * 100) + "%";
           document.querySelector(".chapter-progress").setAttribute("aria-label", "Прогресс книги " + Math.round(((index + 1) / chapters.length) * 100) + "%");
+          chapterCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       });
       document.querySelector("#video-toggle").addEventListener("click", (event) => {
@@ -236,6 +258,61 @@
           document.querySelectorAll("[data-voice]").forEach((item) => item.classList.remove("active"));
           if (!wasActive) button.classList.add("active");
         });
+      });
+
+      const overlay = document.querySelector(".nav-overlay");
+      const toggle = document.querySelector(".menu-toggle");
+      const links = document.querySelector("#site-menu");
+      const topbar = document.querySelector(".topbar");
+      const closeMenu = () => {
+        overlay.hidden = true;
+        toggle.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.querySelector(".sr-only").textContent = "Открыть меню";
+        links.classList.remove("is-open");
+        topbar.classList.remove("is-open");
+        document.body.style.overflow = "";
+      };
+      const openMenu = () => {
+        overlay.hidden = false;
+        toggle.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.querySelector(".sr-only").textContent = "Закрыть меню";
+        links.classList.add("is-open");
+        topbar.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+      };
+      toggle.addEventListener("click", () => {
+        if (toggle.classList.contains("is-open")) closeMenu();
+        else openMenu();
+      });
+      overlay.addEventListener("click", closeMenu);
+      links.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+      document.querySelector(".brand").addEventListener("click", closeMenu);
+
+      const lightbox = document.querySelector("#lightbox");
+      const closePhoto = () => {
+        lightbox.hidden = true;
+        document.body.style.overflow = toggle.classList.contains("is-open") ? "hidden" : "";
+      };
+      const openPhoto = (photo) => {
+        document.querySelector("#lightbox-image").src = photo.image;
+        document.querySelector("#lightbox-year").textContent = photo.year;
+        document.querySelector("#lightbox-title").textContent = photo.title;
+        document.querySelector("#lightbox-caption").textContent = photo.caption;
+        lightbox.hidden = false;
+        document.body.style.overflow = "hidden";
+      };
+      document.querySelectorAll(".photo-card").forEach((card) => {
+        card.addEventListener("click", () => openPhoto(card.dataset));
+      });
+      lightbox.querySelectorAll("[aria-label='Закрыть фото']").forEach((button) => {
+        button.addEventListener("click", closePhoto);
+      });
+      window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!lightbox.hidden) closePhoto();
+        else closeMenu();
       });
     </script>
   </body>

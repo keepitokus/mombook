@@ -1,4 +1,4 @@
-import { mkdir, copyFile, readFile, writeFile, rm } from "node:fs/promises";
+import { mkdir, copyFile, readFile, writeFile, rm, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = process.cwd();
@@ -41,12 +41,54 @@ const chapters = [
 ];
 
 const gallery = [
-  ["1983", "Велосипед у реки", "Первое лето, которое Лена называла своим."],
-  ["1992", "Филфак и красная помада", "Фотография из автомата рядом с метро."],
-  ["1999", "Книжный лоток", "День, когда началась история с Андреем."],
-  ["2008", "Первое какао для Ники", "Субботняя традиция стала семейным ритуалом."],
-  ["2016", "Поездка к морю", "Мама смеётся так, что все кадры получаются живыми."],
-  ["2026", "Эта книга", "Дети собирают историю, которую хочется сохранить."],
+  {
+    year: "1983",
+    title: "У реки",
+    caption: "Лена на велосипеде: первое лето, которое она называла своим.",
+    image: "assets/gallery/mom-01.jpg",
+  },
+  {
+    year: "2008",
+    title: "Вверх",
+    caption: "Мама поднимает ребёнка так, будто весь дом становится легче.",
+    image: "assets/gallery/mom-02.jpg",
+  },
+  {
+    year: "2012",
+    title: "Семейный портрет",
+    caption: "Тот кадр, где мама в центре, а все смотрят и улыбаются по-настоящему.",
+    image: "assets/gallery/mom-03.jpg",
+  },
+  {
+    year: "2018",
+    title: "На холме",
+    caption: "Она ведёт детей к закату — и кажется, что время останавливается.",
+    image: "assets/gallery/mom-04.jpg",
+  },
+  {
+    year: "2026",
+    title: "Стол с памятью",
+    caption: "Мама разбирает старые снимки, из которых потом собирается книга.",
+    image: "assets/gallery/mom-05.jpg",
+  },
+  {
+    year: "2026",
+    title: "Смотрим вместе",
+    caption: "Дети сидят рядом с мамой и листают её историю на экране.",
+    image: "assets/gallery/mom-06.jpg",
+  },
+  {
+    year: "2026",
+    title: "Эта книга",
+    caption: "Портрет, с которого начинается персональная книга о ней.",
+    image: "assets/gallery/mom-07.jpg",
+  },
+  {
+    year: "2026",
+    title: "Тихий вечер",
+    caption: "Когда дом затихает, и мама остаётся наедине с собой.",
+    image: "assets/gallery/mom-08.jpg",
+  },
 ];
 
 const voices = [
@@ -77,29 +119,30 @@ const escapeHtml = (value) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 
-const css = (await readFile(resolve(root, "app/globals.css"), "utf8"))
+const css = `${(await readFile(resolve(root, "app/globals.css"), "utf8"))
   .replace('@import "tailwindcss";', "")
-  .replaceAll('url("/mamina-istoriya-hero.png")', 'url("assets/mamina-istoriya-hero.png")');
+  .replaceAll('url("/mamina-istoriya-hero.png")', 'url("assets/mamina-istoriya-hero.png")')}
+.lightbox[hidden] { display: none !important; }
+`;
 
 const chapterTabs = chapters
   .map(
     (chapter, index) => `
-      <button class="${index === 0 ? "chapter-tab active" : "chapter-tab"}" data-chapter="${index}" role="tab" aria-selected="${index === 0}">
-        <span>${chapter.years}</span>
-        ${escapeHtml(chapter.title)}
+      <button class="${index === 0 ? "chapter-tab active" : "chapter-tab"}" data-chapter="${index}" role="tab" aria-label="${escapeHtml(`${chapter.years}. ${chapter.title}`)}" aria-selected="${index === 0}">
+        <span class="chapter-tab-years">${chapter.years}</span>
+        <span class="chapter-tab-title">${escapeHtml(chapter.title)}</span>
       </button>`,
   )
   .join("");
 
 const galleryCards = gallery
   .map(
-    ([year, title, caption], index) => `
-      <article class="photo-card tone-${index + 1}">
-        <div class="photo-shine"></div>
-        <span>${year}</span>
-        <h3>${escapeHtml(title)}</h3>
-        <p>${escapeHtml(caption)}</p>
-      </article>`,
+    (photo) => `
+      <button type="button" class="photo-card" style="--photo-image: url('${photo.image}')" data-year="${escapeHtml(photo.year)}" data-title="${escapeHtml(photo.title)}" data-caption="${escapeHtml(photo.caption)}" data-image="${photo.image}" aria-label="${escapeHtml(`${photo.year}. ${photo.title}. Открыть фото`)}">
+        <span>${escapeHtml(photo.year)}</span>
+        <h3>${escapeHtml(photo.title)}</h3>
+        <p>${escapeHtml(photo.caption)}</p>
+      </button>`,
   )
   .join("");
 
@@ -136,12 +179,16 @@ const html = `<!doctype html>
   </head>
   <body>
     <main class="site-shell">
+      <button class="nav-overlay" type="button" aria-label="Закрыть меню" hidden></button>
       <nav class="topbar" aria-label="Навигация по демо-книге">
         <a class="brand" href="#cover" aria-label="Я здесь, к началу книги">
-          <span class="brand-mark">Я</span>
-          <span>Я здесь</span>
+          <img class="brand-logo" src="assets/ya-zdes-logo.jpg" alt="" width="112" height="112">
         </a>
-        <div class="nav-links">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+          <span class="sr-only">Открыть меню</span>
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-links" id="site-menu">
           <a href="#chapters">Главы</a>
           <a href="#gallery">Фото</a>
           <a href="#voices">Голоса</a>
@@ -189,7 +236,7 @@ const html = `<!doctype html>
         </div>
         <div class="chapter-stage">
           <div class="chapter-list" role="tablist" aria-label="Выбор главы">${chapterTabs}</div>
-          <article class="chapter-card" role="tabpanel">
+          <article class="chapter-card" role="tabpanel" id="chapter-card">
             <div class="chapter-progress" aria-label="Прогресс книги 25%"><span style="width: 25%"></span></div>
             <p class="section-kicker" id="chapter-place">${chapters[0].place}</p>
             <h3 id="chapter-title">${chapters[0].title}</h3>
@@ -249,10 +296,23 @@ const html = `<!doctype html>
         </div>
       </section>
     </main>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+      <button class="lightbox-backdrop" type="button" aria-label="Закрыть фото"></button>
+      <button class="lightbox-close" type="button" aria-label="Закрыть фото"><span aria-hidden="true">×</span></button>
+      <figure class="lightbox-figure">
+        <img id="lightbox-image" alt="">
+        <figcaption>
+          <span id="lightbox-year"></span>
+          <strong id="lightbox-title"></strong>
+          <p id="lightbox-caption"></p>
+        </figcaption>
+      </figure>
+    </div>
     <script>
       const chapters = ${JSON.stringify(chapters)};
       const tabs = document.querySelectorAll("[data-chapter]");
       const progress = document.querySelector(".chapter-progress span");
+      const chapterCard = document.querySelector("#chapter-card");
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
           const index = Number(tab.dataset.chapter);
@@ -267,6 +327,7 @@ const html = `<!doctype html>
           document.querySelector("#chapter-memory").textContent = chapter.memory;
           progress.style.width = Math.round(((index + 1) / chapters.length) * 100) + "%";
           document.querySelector(".chapter-progress").setAttribute("aria-label", "Прогресс книги " + Math.round(((index + 1) / chapters.length) * 100) + "%");
+          chapterCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       });
       document.querySelector("#video-toggle").addEventListener("click", (event) => {
@@ -281,6 +342,61 @@ const html = `<!doctype html>
           if (!wasActive) button.classList.add("active");
         });
       });
+
+      const overlay = document.querySelector(".nav-overlay");
+      const toggle = document.querySelector(".menu-toggle");
+      const links = document.querySelector("#site-menu");
+      const topbar = document.querySelector(".topbar");
+      const closeMenu = () => {
+        overlay.hidden = true;
+        toggle.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.querySelector(".sr-only").textContent = "Открыть меню";
+        links.classList.remove("is-open");
+        topbar.classList.remove("is-open");
+        document.body.style.overflow = "";
+      };
+      const openMenu = () => {
+        overlay.hidden = false;
+        toggle.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.querySelector(".sr-only").textContent = "Закрыть меню";
+        links.classList.add("is-open");
+        topbar.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+      };
+      toggle.addEventListener("click", () => {
+        if (toggle.classList.contains("is-open")) closeMenu();
+        else openMenu();
+      });
+      overlay.addEventListener("click", closeMenu);
+      links.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+      document.querySelector(".brand").addEventListener("click", closeMenu);
+
+      const lightbox = document.querySelector("#lightbox");
+      const closePhoto = () => {
+        lightbox.hidden = true;
+        document.body.style.overflow = toggle.classList.contains("is-open") ? "hidden" : "";
+      };
+      const openPhoto = (photo) => {
+        document.querySelector("#lightbox-image").src = photo.image;
+        document.querySelector("#lightbox-year").textContent = photo.year;
+        document.querySelector("#lightbox-title").textContent = photo.title;
+        document.querySelector("#lightbox-caption").textContent = photo.caption;
+        lightbox.hidden = false;
+        document.body.style.overflow = "hidden";
+      };
+      document.querySelectorAll(".photo-card").forEach((card) => {
+        card.addEventListener("click", () => openPhoto(card.dataset));
+      });
+      lightbox.querySelectorAll("[aria-label='Закрыть фото']").forEach((button) => {
+        button.addEventListener("click", closePhoto);
+      });
+      window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!lightbox.hidden) closePhoto();
+        else closeMenu();
+      });
     </script>
   </body>
 </html>
@@ -290,6 +406,12 @@ await rm(outDir, { recursive: true, force: true });
 await mkdir(assetsDir, { recursive: true });
 await copyFile(resolve(root, "public/mamina-istoriya-hero.png"), resolve(assetsDir, "mamina-istoriya-hero.png"));
 await copyFile(resolve(root, "public/favicon.svg"), resolve(assetsDir, "favicon.svg"));
+await copyFile(resolve(root, "public/ya-zdes-logo.jpg"), resolve(assetsDir, "ya-zdes-logo.jpg"));
+const galleryOut = resolve(assetsDir, "gallery");
+await mkdir(galleryOut, { recursive: true });
+for (const file of await readdir(resolve(root, "public/gallery"))) {
+  await copyFile(resolve(root, "public/gallery", file), resolve(galleryOut, file));
+}
 await writeFile(resolve(outDir, "styles.css"), css);
 await writeFile(resolve(outDir, "index.html"), html);
 await writeFile(resolve(outDir, ".nojekyll"), "");
